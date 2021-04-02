@@ -32,7 +32,7 @@ yarn.lock
 Thumbs.db
 
 # Report generated from jest-junit
-test/native/junit.xml
+junit.xml
 
 # Local overrides
 .wp-env.override.json

@@ -2,6 +2,7 @@
  * External dependencies
  */
 const glob = require( 'glob' ).sync;
+const path = require( 'path' );
 
 const defaultPlatform = 'android';
 const rnPlatform = process.env.TEST_RN_PLATFORM || defaultPlatform;
@@ -59,6 +60,13 @@ module.exports = {
 	haste: {
 		defaultPlatform: rnPlatform,
 		platforms: [ 'android', 'ios', 'native' ],
+	},
+	transform: {
+		'\\.[jt]sx?$': [
+			require.resolve( 'react-native/jest/preprocessor.js' ),
+			// https://git.io/JYiYc
+			{ configFile: path.resolve( __dirname, 'babel.config.js' ) },
+		],
 	},
 	transformIgnorePatterns: [
 		// This is required for now to have jest transform some of our modules
