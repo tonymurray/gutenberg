@@ -119,6 +119,9 @@ test.describe( 'undo', () => {
 			endOffset: 'before keyboard '.length,
 		} );
 
+		// Undo the collapsed bold command.
+		await pageUtils.pressKeys( 'primary+z' );
+
 		await pageUtils.pressKeys( 'primary+z' );
 
 		await expect.poll( editor.getEditedPostContent ).toBe( '' );
@@ -141,6 +144,9 @@ test.describe( 'undo', () => {
 			startOffset: 'before keyboard '.length,
 			endOffset: 'before keyboard '.length,
 		} );
+
+		// Redo the collapsed bold command.
+		await pageUtils.pressKeys( 'primaryShift+z' );
 
 		await pageUtils.pressKeys( 'primaryShift+z' );
 

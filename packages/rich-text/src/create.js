@@ -14,7 +14,7 @@ import {
 	OBJECT_REPLACEMENT_CHARACTER,
 	ZWNBSP,
 } from './special-characters';
-import { RichTextValue } from './component';
+import { RichTextValue } from './value';
 
 /** @typedef {import('./types').RichTextValue} RichTextValue */
 
