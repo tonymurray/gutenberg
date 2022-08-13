@@ -19,30 +19,19 @@ import { useSelectObject } from './use-select-object';
 import { useInputAndSelection } from './use-input-and-selection';
 import { useSelectionChangeCompat } from './use-selection-change-compat';
 import { useDelete } from './use-delete';
-function RichTextValue( { value, ...settings } ) {
-	for ( const key in value ) {
-		Object.defineProperty( this, key, {
-			value: value[ key ],
-			enumerable: true,
-		} );
-	}
 
-	for ( const key in settings ) {
-		Object.defineProperty( this, key, { value: settings[ key ] } );
+class RichTextValue extends String {
+	constructor( { value } ) {
+		super( toHTMLString( ...arguments ) );
+
+		for ( const key in value ) {
+			Object.defineProperty( this, key, {
+				value: value[ key ],
+				enumerable: true,
+			} );
+		}
 	}
 }
-
-RichTextValue.prototype.toString = function () {
-	return toHTMLString( {
-		value: { ...this },
-		multilineTag: this.multilineTag,
-		preserveWhiteSpace: this.preserveWhiteSpace,
-	} );
-};
-
-RichTextValue.prototype.replace = function () {
-	return this.toString().replace( ...arguments );
-};
 
 export function useRichText( {
 	value = '',
