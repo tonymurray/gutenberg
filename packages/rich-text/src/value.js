@@ -20,14 +20,17 @@ export class RichTextValue {
 	}
 
 	toString() {
-		if ( ! this.toString.cached ) {
-			this.toString.cached = toHTMLString( {
-				value: { ...this },
-				multilineTag: this.multilineTag,
-				preserveWhiteSpace: this.preserveWhiteSpace,
+		if ( ! this.cache ) {
+			Object.defineProperty( this, 'cache', {
+				value: toHTMLString( {
+					value: { ...this },
+					multilineTag: this.multilineTag,
+					preserveWhiteSpace: this.preserveWhiteSpace,
+				} ),
 			} );
 		}
-		return this.toString.cached;
+
+		return this.cache;
 	}
 }
 
