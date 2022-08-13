@@ -40,6 +40,10 @@ RichTextValue.prototype.toString = function () {
 	} );
 };
 
+RichTextValue.prototype.replace = function () {
+	return this.toString().replace( ...arguments );
+};
+
 export function useRichText( {
 	value = '',
 	selectionStart,
