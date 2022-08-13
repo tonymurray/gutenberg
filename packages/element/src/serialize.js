@@ -649,10 +649,7 @@ export function renderNativeComponent(
 		content = renderChildren( props.value, context, legacyContext );
 		const { value, ...restProps } = props;
 		props = restProps;
-	} else if (
-		props.dangerouslySetInnerHTML &&
-		typeof props.dangerouslySetInnerHTML.__html === 'string'
-	) {
+	} else if ( props.dangerouslySetInnerHTML ) {
 		// Dangerous content is left unescaped.
 		content = props.dangerouslySetInnerHTML.__html;
 	} else if ( typeof props.children !== 'undefined' ) {

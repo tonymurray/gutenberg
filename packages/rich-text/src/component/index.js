@@ -8,7 +8,7 @@ import { useRegistry } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { create } from '../create';
+import { create, RichTextValue } from '../create';
 import { apply } from '../to-dom';
 import { toHTMLString } from '../to-html-string';
 import { useDefaultStyle } from './use-default-style';
@@ -78,13 +78,16 @@ export function useRichText( {
 
 	function setRecordFromProps() {
 		_value.current = value;
-		record.current = create( {
-			html: value,
-			multilineTag,
-			multilineWrapperTags:
-				multilineTag === 'li' ? [ 'ul', 'ol' ] : undefined,
-			preserveWhiteSpace,
-		} );
+		record.current =
+			typeof value === 'string'
+				? create( {
+						html: value,
+						multilineTag,
+						multilineWrapperTags:
+							multilineTag === 'li' ? [ 'ul', 'ol' ] : undefined,
+						preserveWhiteSpace,
+				  } )
+				: value;
 		if ( disableFormats ) {
 			record.current.formats = Array( value.length );
 			record.current.replacements = Array( value.length );
@@ -140,16 +143,12 @@ export function useRichText( {
 		if ( disableFormats ) {
 			_value.current = newRecord.text;
 		} else {
-			_value.current = toHTMLString( {
-				value: __unstableBeforeSerialize
-					? {
-							...newRecord,
-							formats: __unstableBeforeSerialize( newRecord ),
-					  }
-					: newRecord,
-				multilineTag,
-				preserveWhiteSpace,
-			} );
+			_value.current = __unstableBeforeSerialize
+				? new RichTextValue( {
+						...newRecord,
+						formats: __unstableBeforeSerialize( newRecord ),
+				  } )
+				: newRecord;
 		}
 
 		const { start, end, formats, text } = newRecord;
