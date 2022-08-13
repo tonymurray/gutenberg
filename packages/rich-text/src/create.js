@@ -164,6 +164,10 @@ export function create( {
 		};
 	}
 
+	if ( typeof html === 'object' ) {
+		return html;
+	}
+
 	if ( typeof html === 'string' && html.length > 0 ) {
 		// It does not matter which document this is, we're just using it to
 		// parse.
