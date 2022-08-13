@@ -20,7 +20,7 @@ import { useInputAndSelection } from './use-input-and-selection';
 import { useSelectionChangeCompat } from './use-selection-change-compat';
 import { useDelete } from './use-delete';
 
-class RichTextValue extends String {
+export class RichTextValue extends String {
 	constructor( { value } ) {
 		super( toHTMLString( ...arguments ) );
 

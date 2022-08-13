@@ -47,8 +47,14 @@ export function isUnmodifiedBlock( block ) {
 	const newBlock = isUnmodifiedBlock[ block.name ];
 	const blockType = getBlockType( block.name );
 
+	function valueOf( value ) {
+		return typeof value === 'object' ? value.valueOf() : value;
+	}
+
 	return Object.keys( blockType?.attributes ?? {} ).every(
-		( key ) => newBlock.attributes[ key ] === block.attributes[ key ]
+		( key ) =>
+			valueOf( newBlock.attributes[ key ] ) ===
+			valueOf( block.attributes[ key ] )
 	);
 }
 
