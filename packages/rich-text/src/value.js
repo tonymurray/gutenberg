@@ -38,5 +38,11 @@ export class RichTextValue {
 				return _toHTMLString( args ).length;
 			},
 		} );
+
+		Object.defineProperty( this, 'toJSON', {
+			value() {
+				return _toHTMLString( args );
+			},
+		} );
 	}
 }
