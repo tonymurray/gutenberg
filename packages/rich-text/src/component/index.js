@@ -8,7 +8,7 @@ import { useRegistry } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { create, RichTextValue } from '../create';
+import { create } from '../create';
 import { apply } from '../to-dom';
 import { toHTMLString } from '../to-html-string';
 import { useDefaultStyle } from './use-default-style';
@@ -19,6 +19,26 @@ import { useSelectObject } from './use-select-object';
 import { useInputAndSelection } from './use-input-and-selection';
 import { useSelectionChangeCompat } from './use-selection-change-compat';
 import { useDelete } from './use-delete';
+function RichTextValue( { value, ...settings } ) {
+	for ( const key in value ) {
+		Object.defineProperty( this, key, {
+			value: value[ key ],
+			enumerable: true,
+		} );
+	}
+
+	for ( const key in settings ) {
+		Object.defineProperty( this, key, { value: settings[ key ] } );
+	}
+}
+
+RichTextValue.prototype.toString = function () {
+	return toHTMLString( {
+		value: { ...this },
+		multilineTag: this.multilineTag,
+		preserveWhiteSpace: this.preserveWhiteSpace,
+	} );
+};
 
 export function useRichText( {
 	value = '',
@@ -87,7 +107,7 @@ export function useRichText( {
 							multilineTag === 'li' ? [ 'ul', 'ol' ] : undefined,
 						preserveWhiteSpace,
 				  } )
-				: value;
+				: { ...value };
 		if ( disableFormats ) {
 			record.current.formats = Array( value.length );
 			record.current.replacements = Array( value.length );
@@ -143,12 +163,16 @@ export function useRichText( {
 		if ( disableFormats ) {
 			_value.current = newRecord.text;
 		} else {
-			_value.current = __unstableBeforeSerialize
-				? new RichTextValue( {
-						...newRecord,
-						formats: __unstableBeforeSerialize( newRecord ),
-				  } )
-				: newRecord;
+			_value.current = new RichTextValue( {
+				value: __unstableBeforeSerialize
+					? {
+							...newRecord,
+							formats: __unstableBeforeSerialize( newRecord ),
+					  }
+					: newRecord,
+				multilineTag,
+				preserveWhiteSpace,
+			} );
 		}
 
 		const { start, end, formats, text } = newRecord;
