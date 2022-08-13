@@ -4,45 +4,56 @@
 import { toHTMLString } from './to-html-string';
 
 export class RichTextValue {
-	constructor( args ) {
-		for ( const key in args.value ) {
+	constructor( { value, ...settings } ) {
+		for ( const key in value ) {
 			Object.defineProperty( this, key, {
-				value: args.value[ key ],
+				value: value[ key ],
 				enumerable: true,
 			} );
 		}
 
-		function _toHTMLString( _args ) {
-			if ( ! _toHTMLString.cached ) {
-				_toHTMLString.cached = toHTMLString( _args );
-			}
-			return _toHTMLString.cached;
-		}
-
-		Object.getOwnPropertyNames( String.prototype )
-			.filter(
-				( prop ) =>
-					typeof String.prototype[ prop ] === 'function' &&
-					prop !== 'constructor'
-			)
-			.forEach( ( method ) => {
-				Object.defineProperty( this, method, {
-					value() {
-						return _toHTMLString( args )[ method ]( ...arguments );
-					},
-				} );
+		for ( const key in settings ) {
+			Object.defineProperty( this, key, {
+				value: settings[ key ],
 			} );
+		}
+	}
 
-		Object.defineProperty( this, 'length', {
-			get() {
-				return _toHTMLString( args ).length;
-			},
-		} );
-
-		Object.defineProperty( this, 'toJSON', {
-			value() {
-				return _toHTMLString( args );
-			},
-		} );
+	toString() {
+		if ( ! this.toString.cached ) {
+			this.toString.cached = toHTMLString( {
+				value: { ...this },
+				multilineTag: this.multilineTag,
+				preserveWhiteSpace: this.preserveWhiteSpace,
+			} );
+		}
+		return this.toString.cached;
 	}
 }
+
+Object.getOwnPropertyNames( String.prototype )
+	.filter(
+		( prop ) =>
+			typeof String.prototype[ prop ] === 'function' &&
+			prop !== 'constructor' &&
+			prop !== 'toString'
+	)
+	.forEach( ( method ) => {
+		Object.defineProperty( RichTextValue.prototype, method, {
+			value() {
+				return this.toString()[ method ]( ...arguments );
+			},
+		} );
+	} );
+
+Object.defineProperty( RichTextValue.prototype, 'length', {
+	get() {
+		return this.toString().length;
+	},
+} );
+
+Object.defineProperty( RichTextValue.prototype, 'toJSON', {
+	value() {
+		return this.toString();
+	},
+} );
