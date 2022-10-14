@@ -238,21 +238,24 @@ export default function HeaderEditMode() {
 								/* translators: button label text should, if possible, be under 16 characters. */
 								viewLabel={ __( 'View' ) }
 							>
-								<MenuGroup>
-									<MenuItem
-										href={ homeUrl }
-										target="_blank"
-										icon={ external }
-									>
-										{ __( 'View site' ) }
-										<VisuallyHidden as="span">
-											{
-												/* translators: accessibility text */
-												__( '(opens in a new tab)' )
-											}
-										</VisuallyHidden>
-									</MenuItem>
-								</MenuGroup>
+								{ ( { onClose } ) => (
+									<MenuGroup>
+										<MenuItem
+											href={ homeUrl }
+											target="_blank"
+											icon={ external }
+											onClick={ onClose }
+										>
+											{ __( 'View site' ) }
+											<VisuallyHidden as="span">
+												{
+													/* translators: accessibility text */
+													__( '(opens in a new tab)' )
+												}
+											</VisuallyHidden>
+										</MenuItem>
+									</MenuGroup>
+								) }
 							</PreviewOptions>
 						</div>
 					) }
