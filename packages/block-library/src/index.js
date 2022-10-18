@@ -152,10 +152,8 @@ const getAllBlocks = () => {
 		details,
 		embed,
 		file,
-		form,
 		group,
 		html,
-		inputField,
 		latestComments,
 		latestPosts,
 		mediaText,
@@ -231,6 +229,10 @@ const getAllBlocks = () => {
 		queryTitle,
 		postAuthorBiography,
 	];
+	if ( window?.__experimentalEnableFormBlocks ) {
+		blocks.push( form );
+		blocks.push( inputField );
+	}
 	return blocks.filter( Boolean );
 };
 
