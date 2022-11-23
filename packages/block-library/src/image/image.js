@@ -180,7 +180,13 @@ export default function Image( {
 		}
 
 		window
-			.fetch( url )
+			.fetch(
+				`${
+					window.ajaxurl
+				}?action=gutenberg_fetch_media&url=${ encodeURIComponent(
+					url
+				) }`
+			)
 			.then( ( response ) => response.blob() )
 			.then( ( blob ) => setExternalBlob( blob ) )
 			// Do nothing, cannot upload.
@@ -373,13 +379,6 @@ export default function Image( {
 						label={ __( 'Crop' ) }
 					/>
 				) }
-				{ externalBlob && (
-					<ToolbarButton
-						onClick={ uploadExternal }
-						icon={ upload }
-						label={ __( 'Upload external image' ) }
-					/>
-				) }
 				{ ! multiImageSelection && canInsertCover && (
 					<ToolbarButton
 						icon={ overlayText }
@@ -399,6 +398,13 @@ export default function Image( {
 						onSelectURL={ onSelectURL }
 						onError={ onUploadError }
 					/>
+					{ externalBlob && (
+						<ToolbarButton
+							onClick={ uploadExternal }
+							icon={ upload }
+							label={ __( 'Upload external image' ) }
+						/>
+					) }
 				</BlockControls>
 			) }
 			<InspectorControls>
