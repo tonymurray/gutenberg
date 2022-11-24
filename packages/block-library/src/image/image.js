@@ -15,6 +15,7 @@ import {
 	TextareaControl,
 	TextControl,
 	ToolbarButton,
+	ToolbarGroup,
 } from '@wordpress/components';
 import { useViewportMatch, usePrevious } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -398,13 +399,17 @@ export default function Image( {
 						onSelectURL={ onSelectURL }
 						onError={ onUploadError }
 					/>
-					{ externalBlob && (
+				</BlockControls>
+			) }
+			{ ! multiImageSelection && externalBlob && (
+				<BlockControls>
+					<ToolbarGroup>
 						<ToolbarButton
 							onClick={ uploadExternal }
 							icon={ upload }
 							label={ __( 'Upload external image' ) }
 						/>
-					) }
+					</ToolbarGroup>
 				</BlockControls>
 			) }
 			<InspectorControls>
