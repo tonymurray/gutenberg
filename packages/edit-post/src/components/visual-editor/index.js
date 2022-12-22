@@ -52,7 +52,10 @@ function MaybeIframe( { children, contentRef, shouldIframe, styles, style } ) {
 	if ( ! shouldIframe ) {
 		return (
 			<>
-				<EditorStyles styles={ styles } />
+				<EditorStyles
+					styles={ styles }
+					scope=".editor-styles-wrapper"
+				/>
 				<WritingFlow
 					ref={ contentRef }
 					className="editor-styles-wrapper"
