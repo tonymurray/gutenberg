@@ -7,12 +7,12 @@ import {
 	useFloating,
 	flip as flipMiddleware,
 	shift as shiftMiddleware,
+	limitShift,
 	autoUpdate,
 	arrow,
 	offset as offsetMiddleware,
 	size,
 	Middleware,
-	MiddlewareArguments,
 } from '@floating-ui/react-dom';
 // eslint-disable-next-line no-restricted-imports
 import {
@@ -51,7 +51,6 @@ import Button from '../button';
 import ScrollLock from '../scroll-lock';
 import { Slot, Fill, useSlot } from '../slot-fill';
 import {
-	getFrameOffset,
 	positionToPlacement,
 	placementToMotionAnimationProps,
 	getReferenceOwnerDocument,
@@ -64,7 +63,6 @@ import type {
 	PopoverAnchorRefReference,
 	PopoverAnchorRefTopBottom,
 } from './types';
-import { limitShift as customLimitShift } from './limit-shift';
 
 /**
  * Name of slot in which popover should fill.
@@ -259,37 +257,7 @@ const UnforwardedPopover = (
 		? positionToPlacement( position )
 		: placementProp;
 
-	/**
-	 * Offsets the position of the popover when the anchor is inside an iframe.
-	 *
-	 * Store the offset in a ref, due to constraints with floating-ui:
-	 * https://floating-ui.com/docs/react-dom#variables-inside-middleware-functions.
-	 */
-	const frameOffsetRef = useRef( getFrameOffset( referenceOwnerDocument ) );
-
 	const middleware = [
-		// Custom middleware which adjusts the popover's position by taking into
-		// account the offset of the anchor's iframe (if any) compared to the page.
-		{
-			name: 'frameOffset',
-			fn( { x, y }: MiddlewareArguments ) {
-				if ( ! frameOffsetRef.current ) {
-					return {
-						x,
-						y,
-					};
-				}
-
-				return {
-					x: x + frameOffsetRef.current.x,
-					y: y + frameOffsetRef.current.y,
-					data: {
-						// This will be used in the customLimitShift() function.
-						amount: frameOffsetRef.current,
-					},
-				};
-			},
-		},
 		offsetMiddleware( offsetProp ),
 		computedFlipProp ? flipMiddleware() : undefined,
 		computedResizeProp
@@ -313,7 +281,7 @@ const UnforwardedPopover = (
 		shift
 			? shiftMiddleware( {
 					crossAxis: true,
-					limiter: customLimitShift(),
+					limiter: limitShift(),
 					padding: 1, // Necessary to avoid flickering at the edge of the viewport.
 			  } )
 			: undefined,
@@ -425,35 +393,24 @@ const UnforwardedPopover = (
 
 	// If the reference element is in a different ownerDocument (e.g. iFrame),
 	// we need to manually update the floating's position as the reference's owner
-	// document scrolls. Also update the frame offset if the view resizes.
+	// document scrolls.
 	useLayoutEffect( () => {
 		if (
-			// Reference and root documents are the same.
-			referenceOwnerDocument === document ||
-			// Reference and floating are in the same document.
-			referenceOwnerDocument === refs.floating.current?.ownerDocument ||
-			// The reference's document has no view (i.e. window)
-			// or frame element (ie. it's not an iframe).
-			! referenceOwnerDocument?.defaultView?.frameElement
+			! referenceOwnerDocument ||
+			! referenceOwnerDocument.defaultView
 		) {
-			frameOffsetRef.current = undefined;
 			return;
 		}
 
 		const { defaultView } = referenceOwnerDocument;
 
-		const updateFrameOffset = () => {
-			frameOffsetRef.current = getFrameOffset( referenceOwnerDocument );
-			update();
-		};
-		defaultView.addEventListener( 'resize', updateFrameOffset );
-
-		updateFrameOffset();
+		defaultView.addEventListener( 'resize', update );
+		update();
 
 		return () => {
-			defaultView.removeEventListener( 'resize', updateFrameOffset );
+			defaultView.removeEventListener( 'resize', update );
 		};
-	}, [ referenceOwnerDocument, update, refs.floating ] );
+	}, [ referenceOwnerDocument, update ] );
 
 	const mergedFloatingRef = useMergeRefs( [
 		floating,
@@ -527,18 +484,12 @@ const UnforwardedPopover = (
 						left:
 							typeof arrowData?.x !== 'undefined' &&
 							Number.isFinite( arrowData.x )
-								? `${
-										arrowData.x +
-										( frameOffsetRef.current?.x ?? 0 )
-								  }px`
+								? `${ arrowData.x }px`
 								: '',
 						top:
 							typeof arrowData?.y !== 'undefined' &&
 							Number.isFinite( arrowData.y )
-								? `${
-										arrowData.y +
-										( frameOffsetRef.current?.y ?? 0 )
-								  }px`
+								? `${ arrowData.y }px`
 								: '',
 					} }
 				>
