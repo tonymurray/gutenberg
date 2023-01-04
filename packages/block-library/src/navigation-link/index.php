@@ -135,12 +135,12 @@ function render_block_core_navigation_link( $attributes, $content, $block ) {
 	$is_post_type           = $is_post_type || isset( $attributes['type'] ) && ( 'post' === $attributes['type'] || 'page' === $attributes['type'] );
 
 	// Don't render the block's subtree if it is a draft or if the ID does not exist.
-	if ( $is_post_type && $navigation_link_has_id ) {
-		$post = get_post( $attributes['id'] );
-		if ( ! $post || 'publish' !== $post->post_status ) {
-			return '';
-		}
+	$post = $is_post_type && $navigation_link_has_id ? get_post( $attributes['id'] ) : null;
+
+	if ( ! $post || 'publish' !== $post->post_status ) {
+		return '';
 	}
+
 
 	// Don't render the block's subtree if it has no label.
 	if ( empty( $attributes['label'] ) ) {
@@ -159,6 +159,8 @@ function render_block_core_navigation_link( $attributes, $content, $block ) {
 	$has_submenu = count( $block->inner_blocks ) > 0;
 	$is_active   = ! empty( $attributes['id'] ) && ( get_queried_object_id() === (int) $attributes['id'] );
 
+	$theUrl = $post ? get_permalink( $post ) : $attributes['url'];
+
 	$wrapper_attributes = get_block_wrapper_attributes(
 		array(
 			'class' => $css_classes . ' wp-block-navigation-item' . ( $has_submenu ? ' has-child' : '' ) .
@@ -170,8 +172,8 @@ function render_block_core_navigation_link( $attributes, $content, $block ) {
 		'<a class="wp-block-navigation-item__content" ';
 
 	// Start appending HTML attributes to anchor tag.
-	if ( isset( $attributes['url'] ) ) {
-		$html .= ' href="' . esc_url( $attributes['url'] ) . '"';
+	if ( isset( $theUrl ) ) {
+		$html .= ' href="' . esc_url( $theUrl ) . '"';
 	}
 
 	if ( $is_active ) {
