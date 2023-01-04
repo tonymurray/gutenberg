@@ -87,12 +87,19 @@ export const updateAttributes = (
 		( ! newKind && ! isBuiltInType ) || newKind === 'custom';
 	const kind = isCustomLink ? 'custom' : newKind;
 
+	const hasId = id && Number.isInteger( id );
+
+	// If the new link value has an ID then it's an internal link so do not set the URL.
+	// This will be dynamically generated from the ID.
+	// Passed `url` may already be encoded. To prevent double encoding, decodeURI is executed to revert to the original string.
+	const updatedUrl =
+		! hasId && newUrl ? encodeURI( safeDecodeURI( newUrl ) ) : '';
+
 	setAttributes( {
-		// Passed `url` may already be encoded. To prevent double encoding, decodeURI is executed to revert to the original string.
-		...( newUrl && { url: encodeURI( safeDecodeURI( newUrl ) ) } ),
+		url: updatedUrl,
 		...( label && { label } ),
 		...( undefined !== opensInNewTab && { opensInNewTab } ),
-		...( id && Number.isInteger( id ) && { id } ),
+		...( hasId && { id } ),
 		...( kind && { kind } ),
 		...( type && type !== 'URL' && { type } ),
 	} );
