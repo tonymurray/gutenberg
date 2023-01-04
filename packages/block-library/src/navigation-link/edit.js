@@ -106,23 +106,16 @@ const useIsInvalidLink = ( kind, type, id ) => {
 	const isPostType =
 		kind === 'post-type' || type === 'post' || type === 'page';
 	const hasId = Number.isInteger( id );
-
-	const { post } = useSelect(
+	const postStatus = useSelect(
 		( select ) => {
 			if ( ! isPostType ) {
-				return { post: null };
+				return null;
 			}
 			const { getEntityRecord } = select( coreStore );
-
-			const record = getEntityRecord( 'postType', type, id );
-			return {
-				post: record,
-			};
+			return getEntityRecord( 'postType', type, id )?.status;
 		},
 		[ isPostType, type, id ]
 	);
-
-	const postStatus = post?.status;
 
 	// Check Navigation Link validity if:
 	// 1. Link is 'post-type'.
@@ -136,7 +129,7 @@ const useIsInvalidLink = ( kind, type, id ) => {
 		isPostType && hasId && postStatus && 'trash' === postStatus;
 	const isDraft = 'draft' === postStatus;
 
-	return [ isInvalid, isDraft, post ];
+	return [ isInvalid, isDraft ];
 };
 
 function getMissingText( type ) {
