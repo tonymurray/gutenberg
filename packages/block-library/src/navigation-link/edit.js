@@ -39,6 +39,7 @@ import { link as linkIcon, addSubmenu } from '@wordpress/icons';
 import {
 	store as coreStore,
 	useResourcePermissions,
+	useEntityRecord,
 } from '@wordpress/core-data';
 import { useMergeRefs } from '@wordpress/compose';
 
@@ -178,7 +179,10 @@ export default function NavigationLinkEdit( {
 } ) {
 	const { id, label, type, url, description, rel, title, kind } = attributes;
 
-	const [ isInvalid, isDraft, post ] = useIsInvalidLink( kind, type, id );
+	const [ isInvalid, isDraft ] = useIsInvalidLink( kind, type, id );
+
+	const { record: navPostRecord } = useEntityRecord( 'postType', type, id );
+
 	const { maxNestingLevel } = context;
 
 	const { replaceBlock, __unstableMarkNextChangeAsNotPersistent } =
@@ -408,14 +412,22 @@ export default function NavigationLinkEdit( {
 			: __( 'This item is missing a link' );
 
 	useEffect( () => {
-		if ( post ) {
+		// Only updates attributes if:
+		// - there is an ID (and it has changed).
+		// - there is a navPostRecord.
+		if ( id && navPostRecord ) {
+			// Conditionall update attributes to avoid
+			// unnecessary re-renders.
 			setAttributes( {
-				label: post.title.rendered,
-				url: post.link,
-				title: post.title.rendered,
+				...( label !== navPostRecord?.title.rendered && {
+					label: navPostRecord?.title.rendered,
+				} ),
+				...( url !== navPostRecord?.link && {
+					url: navPostRecord?.link,
+				} ),
 			} );
 		}
-	}, [ post ] );
+	}, [ id, navPostRecord ] );
 
 	return (
 		<>
