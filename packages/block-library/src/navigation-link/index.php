@@ -159,7 +159,8 @@ function render_block_core_navigation_link( $attributes, $content, $block ) {
 	$has_submenu = count( $block->inner_blocks ) > 0;
 	$is_active   = ! empty( $attributes['id'] ) && ( get_queried_object_id() === (int) $attributes['id'] );
 
-	$theUrl = $post ? get_permalink( $post ) : $attributes['url'];
+	$dynamic_url = $post ? get_permalink( $post ) : $attributes['url'];
+	$dynamic_label = $post ? $post->post_title : $attributes['label'];
 
 	$wrapper_attributes = get_block_wrapper_attributes(
 		array(
@@ -172,8 +173,8 @@ function render_block_core_navigation_link( $attributes, $content, $block ) {
 		'<a class="wp-block-navigation-item__content" ';
 
 	// Start appending HTML attributes to anchor tag.
-	if ( isset( $theUrl ) ) {
-		$html .= ' href="' . esc_url( $theUrl ) . '"';
+	if ( isset( $dynamic_url ) ) {
+		$html .= ' href="' . esc_url( $dynamic_url ) . '"';
 	}
 
 	if ( $is_active ) {
@@ -201,8 +202,8 @@ function render_block_core_navigation_link( $attributes, $content, $block ) {
 		// Wrap title with span to isolate it from submenu icon.
 		'<span class="wp-block-navigation-item__label">';
 
-	if ( isset( $attributes['label'] ) ) {
-		$html .= wp_kses_post( $attributes['label'] );
+	if ( isset( $dynamic_label ) ) {
+		$html .= wp_kses_post( $dynamic_label );
 	}
 
 	$html .= '</span>';
