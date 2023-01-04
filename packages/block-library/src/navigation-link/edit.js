@@ -105,16 +105,22 @@ const useIsInvalidLink = ( kind, type, id ) => {
 	const isPostType =
 		kind === 'post-type' || type === 'post' || type === 'page';
 	const hasId = Number.isInteger( id );
-	const postStatus = useSelect(
+	const { post } = useSelect(
 		( select ) => {
 			if ( ! isPostType ) {
 				return null;
 			}
 			const { getEntityRecord } = select( coreStore );
-			return getEntityRecord( 'postType', type, id )?.status;
+
+			const record = getEntityRecord( 'postType', type, id );
+			return {
+				post: record,
+			};
 		},
 		[ isPostType, type, id ]
 	);
+
+	const postStatus = post?.status;
 
 	// Check Navigation Link validity if:
 	// 1. Link is 'post-type'.
@@ -128,7 +134,7 @@ const useIsInvalidLink = ( kind, type, id ) => {
 		isPostType && hasId && postStatus && 'trash' === postStatus;
 	const isDraft = 'draft' === postStatus;
 
-	return [ isInvalid, isDraft ];
+	return [ isInvalid, isDraft, post ];
 };
 
 function getMissingText( type ) {
@@ -171,7 +177,7 @@ export default function NavigationLinkEdit( {
 } ) {
 	const { id, label, type, url, description, rel, title, kind } = attributes;
 
-	const [ isInvalid, isDraft ] = useIsInvalidLink( kind, type, id );
+	const [ isInvalid, isDraft, post ] = useIsInvalidLink( kind, type, id );
 	const { maxNestingLevel } = context;
 
 	const { replaceBlock, __unstableMarkNextChangeAsNotPersistent } =
@@ -399,6 +405,16 @@ export default function NavigationLinkEdit( {
 		isInvalid || isDraft
 			? __( 'This item has been deleted, or is a draft' )
 			: __( 'This item is missing a link' );
+
+	useEffect( () => {
+		if ( post ) {
+			setAttributes( {
+				label: post.title.rendered,
+				url: post.link,
+				title: post.title.rendered,
+			} );
+		}
+	}, [ post ] );
 
 	return (
 		<>
