@@ -105,10 +105,11 @@ const useIsInvalidLink = ( kind, type, id ) => {
 	const isPostType =
 		kind === 'post-type' || type === 'post' || type === 'page';
 	const hasId = Number.isInteger( id );
+
 	const { post } = useSelect(
 		( select ) => {
 			if ( ! isPostType ) {
-				return null;
+				return { post: null };
 			}
 			const { getEntityRecord } = select( coreStore );
 
