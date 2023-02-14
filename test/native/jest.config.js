@@ -63,9 +63,11 @@ module.exports = {
 	},
 	transform: {
 		'\\.[jt]sx?$': [
-			require.resolve( 'react-native/jest/preprocessor.js' ),
+			'babel-jest',
 			// https://git.io/JYiYc
-			{ configFile: path.resolve( __dirname, 'babel.config.js' ) },
+			{
+				configFile: path.resolve( __dirname, 'babel.config.js' ),
+			},
 		],
 	},
 	transformIgnorePatterns: [
