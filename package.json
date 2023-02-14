@@ -308,6 +308,7 @@
 		"test:php": "npm-run-all lint:php test:unit:php",
 		"test:php:watch": "wp-env run composer run-script test:watch",
 		"test:unit": "wp-scripts test-unit-js --config test/unit/jest.config.js",
+		"test:native": "cross-env NODE_ENV=test jest --verbose --config test/native/jest.config.js",
 		"test:unit:date": "bash ./bin/unit-test-date.sh",
 		"test:unit:debug": "wp-scripts --inspect-brk test-unit-js --runInBand --no-cache --verbose --config test/unit/jest.config.js ",
 		"test:unit:profile": "wp-scripts --cpu-prof test-unit-js --runInBand --no-cache --verbose --config test/unit/jest.config.js ",
