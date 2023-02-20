@@ -501,6 +501,21 @@ _Returns_
 
 -   `boolean`: True if a block contains at least one child blocks with inserter support and false otherwise.
 
+### htmlToBlocks
+
+Converts HTML directly to blocks. Looks for a matching transform for each
+top-level tag. The HTML should be filtered to not have any text between
+top-level tags and formatted in a way that blocks can handle the HTML.
+
+_Parameters_
+
+-   _html_ `string`: HTML to convert.
+-   _handler_ `Function`: The handler calling htmlToBlocks: either rawHandler or pasteHandler.
+
+_Returns_
+
+-   `Array`: An array of blocks.
+
 ### isReusableBlock
 
 Determines whether or not the given block is a reusable block. This is a
