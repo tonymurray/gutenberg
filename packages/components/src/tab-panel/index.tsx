@@ -6,8 +6,8 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { useState, useEffect, useCallback } from '@wordpress/element';
 import { useInstanceId } from '@wordpress/compose';
+import { useCallback, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import { NavigableMenu } from '../navigable-container';
 import Button from '../button';
 import type { TabButtonProps, TabPanelProps } from './types';
 import type { WordPressComponentProps } from '../ui/context';
+import { useControlledValue } from '../utils';
 
 const TabButton = ( {
 	tabId,
@@ -77,20 +78,28 @@ export function TabPanel( {
 	tabs,
 	selectOnMove = true,
 	initialTabName,
+	tabName: tabNameProp,
 	orientation = 'horizontal',
 	activeClass = 'is-active',
 	onSelect,
 }: WordPressComponentProps< TabPanelProps, 'div', false > ) {
 	const instanceId = useInstanceId( TabPanel, 'tab-panel' );
-	const [ selected, setSelected ] = useState< string >();
 
-	const handleTabSelection = useCallback(
-		( tabKey: string ) => {
-			setSelected( tabKey );
-			onSelect?.( tabKey );
-		},
-		[ onSelect ]
+	const getTab = useCallback(
+		( name: string | undefined ) =>
+			tabs.find( ( tab ) => tab.name === name ),
+		[ tabs ]
 	);
+	const firstEnabledTab = tabs.find( ( { disabled } ) => ! disabled );
+
+	const [ tabName, setTabName ] = useControlledValue( {
+		defaultValue: ( initialTabName
+			? getTab( initialTabName )
+			: firstEnabledTab
+		)?.name,
+		value: getTab( tabNameProp )?.name,
+		onChange: onSelect,
+	} );
 
 	// Simulate a click on the newly focused tab, which causes the component
 	// to show the `tab-panel` associated with the clicked tab.
@@ -100,50 +109,29 @@ export function TabPanel( {
 	) => {
 		child.click();
 	};
-	const selectedTab = tabs.find( ( { name } ) => name === selected );
+	const selectedTab = getTab( tabName );
 	const selectedId = `${ instanceId }-${ selectedTab?.name ?? 'none' }`;
 
-	// Handle selecting the initial tab.
 	useEffect( () => {
-		// If there's a selected tab, don't override it.
-		if ( selectedTab ) {
-			return;
-		}
+		setTabName( selectedTab?.name );
+		// Disable reason: run only once to call onSelect on initial render
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
-		const initialTab = tabs.find( ( tab ) => tab.name === initialTabName );
-
-		// Wait for the denoted initial tab to be declared before making a
-		// selection. This ensures that if a tab is declared lazily it can
-		// still receive initial selection.
-		if ( initialTabName && ! initialTab ) {
-			return;
-		}
-
-		if ( initialTab && ! initialTab.disabled ) {
-			// Select the initial tab if it's not disabled.
-			handleTabSelection( initialTab.name );
-		} else {
-			// Fallback to the first enabled tab when the initial is disabled.
-			const firstEnabledTab = tabs.find( ( tab ) => ! tab.disabled );
-			if ( firstEnabledTab ) handleTabSelection( firstEnabledTab.name );
-		}
-	}, [ tabs, selectedTab, initialTabName, handleTabSelection ] );
-
-	// Handle the currently selected tab becoming disabled.
 	useEffect( () => {
-		// This effect only runs when the selected tab is defined and becomes disabled.
-		if ( ! selectedTab?.disabled ) {
-			return;
-		}
+		// handle the case of selected tab is removed from tabs
+		if ( ! selectedTab || selectedTab.disabled ) {
+			const fallbackTab = initialTabName
+				? getTab( initialTabName )
+				: firstEnabledTab;
 
-		const firstEnabledTab = tabs.find( ( tab ) => ! tab.disabled );
-
-		// If the currently selected tab becomes disabled, select the first enabled tab.
-		// (if there is one).
-		if ( firstEnabledTab ) {
-			handleTabSelection( firstEnabledTab.name );
+			if ( fallbackTab?.disabled ) {
+				setTabName( firstEnabledTab?.name );
+			} else if ( fallbackTab ) {
+				setTabName( fallbackTab?.name );
+			}
 		}
-	}, [ tabs, selectedTab?.disabled, handleTabSelection ] );
+	}, [ getTab, selectedTab, initialTabName, setTabName, firstEnabledTab ] );
 
 	return (
 		<div className={ className }>
@@ -161,14 +149,14 @@ export function TabPanel( {
 							'components-tab-panel__tabs-item',
 							tab.className,
 							{
-								[ activeClass ]: tab.name === selected,
+								[ activeClass ]: tab.name === selectedTab?.name,
 							}
 						) }
 						tabId={ `${ instanceId }-${ tab.name }` }
 						aria-controls={ `${ instanceId }-${ tab.name }-view` }
-						selected={ tab.name === selected }
+						selected={ tab.name === selectedTab?.name }
 						key={ tab.name }
-						onClick={ () => handleTabSelection( tab.name ) }
+						onClick={ () => setTabName( tab.name ) }
 						disabled={ tab.disabled }
 						label={ tab.icon && tab.title }
 						icon={ tab.icon }
