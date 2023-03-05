@@ -13,6 +13,7 @@ import {
 	useMergeRefs,
 } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { ESCAPE } from '@wordpress/keycodes';
@@ -25,7 +26,7 @@ import { unlock } from '../../private-apis';
 
 export default function ListViewSidebar() {
 	const { setIsListViewOpened } = useDispatch( editSiteStore );
-	const { selectBlock } = useDispatch( blockEditorStore );
+	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 	const { hasBlockSelection } = useSelect(
 		( select ) => ( {
 			hasBlockSelection:
@@ -47,7 +48,8 @@ export default function ListViewSidebar() {
 			hasBlockSelection
 		) {
 			event.preventDefault();
-			selectBlock();
+			clearSelectedBlock();
+			speak( __( 'All blocks deselected.' ), 'assertive' );
 			return;
 		}
 
