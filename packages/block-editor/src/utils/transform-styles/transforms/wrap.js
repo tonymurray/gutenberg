@@ -1,51 +1,92 @@
 /**
- * @constant string IS_ROOT_TAG Regex to check if the selector is a root tag selector.
+ * External dependencies
  */
-const IS_ROOT_TAG = /^(body|html|:root).*$/;
+import convertor from 'css-tree/convertor';
+import { some } from 'lodash';
 
-/**
- * Creates a callback to modify selectors so they only apply within a certain
- * namespace.
- *
- * @param {string}   namespace Namespace to prefix selectors with.
- * @param {string[]} ignore    Selectors to not prefix.
- *
- * @return {(node: Object) => Object} Callback to wrap selectors.
- */
-const wrap =
-	( namespace, ignore = [] ) =>
-	( node ) => {
-		/**
-		 * Updates selector if necessary.
-		 *
-		 * @param {string} selector Selector to modify.
-		 *
-		 * @return {string} Updated selector.
-		 */
-		const updateSelector = ( selector ) => {
-			if ( ignore.includes( selector.trim() ) ) {
-				return selector;
-			}
+const ROOT_SELECTORS = [
+	{
+		// html
+		type: 'TypeSelector',
+		name: 'html',
+	},
+	{
+		// body
+		type: 'TypeSelector',
+		name: 'body',
+	},
+	{
+		// :root
+		type: 'PseudoClassSelector',
+		name: 'root',
+	},
+];
 
-			// Anything other than a root tag is always prefixed.
-			{
-				if ( ! selector.match( IS_ROOT_TAG ) ) {
-					return namespace + ' ' + selector;
-				}
-			}
+const WHITESPACE_CSS = convertor.fromPlainObject( {
+	type: 'WhiteSpace',
+	value: ' ',
+} );
 
-			// HTML and Body elements cannot be contained within our container so lets extract their styles.
-			return selector.replace( /^(body|html|:root)/, namespace );
-		};
+const wrap = function ( namespace, ignore = [] ) {
+	const namespaceCleaned = trimClassnameDot( namespace ); // ensure a pure classname without `.`
+	const wrapperSelector = convertor.fromPlainObject( {
+		type: 'ClassSelector',
+		name: namespaceCleaned,
+	} );
 
-		if ( node.type === 'rule' ) {
-			return {
-				...node,
-				selectors: node.selectors.map( updateSelector ),
-			};
+	return function ( node, item, list ) {
+		// prepend wrapper to selectors that start with non-root selectors
+		if ( node.type === 'Selector' ) {
+			const firstChildNode = node.children.first();
+
+			// skip selectors that ...
+			if (
+				// ... contain ignorable nodes as first child
+				some( ignore, {
+					type: firstChildNode.type,
+					name: firstChildNode.name,
+				} ) ||
+				// ... start with root selectors
+				some( ROOT_SELECTORS, {
+					type: firstChildNode.type,
+					name: firstChildNode.name,
+				} ) ||
+				// ... start with keyframe specific selectors
+				firstChildNode.name === 'from' ||
+				firstChildNode.name === 'to' ||
+				firstChildNode.type === 'Percentage' ||
+				// ...is within a function, a pseudo class selector or a pseudo element
+				// selector
+				this.function !== null
+			)
+				return;
+
+			// add white space between wrapper selector + existing selector
+			const whitespaceCssItem =
+				node.children.createItem( WHITESPACE_CSS );
+			node.children.prepend( whitespaceCssItem );
+
+			const wrapperSelectorItem =
+				node.children.createItem( wrapperSelector );
+			node.children.prepend( wrapperSelectorItem );
 		}
 
-		return node;
+		// replace the root selectors with wrapper selectors
+		if (
+			// must not be an ignorable selector
+			! some( ignore, { type: node.type, name: node.name } ) &&
+			// must be a root selector
+			some( ROOT_SELECTORS, { type: node.type, name: node.name } )
+		) {
+			const wrapperSelectorItem = list.createItem( wrapperSelector );
+			list.replace( item, wrapperSelectorItem );
+		}
 	};
+};
+
+const trimClassnameDot = ( str ) => {
+	if ( str.trim().charAt( 0 ) !== '.' ) return str;
+	return str.substring( 1 );
+};
 
 export default wrap;
