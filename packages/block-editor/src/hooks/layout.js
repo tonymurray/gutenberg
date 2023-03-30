@@ -12,10 +12,15 @@ import { addFilter } from '@wordpress/hooks';
 import { getBlockSupport, hasBlockSupport } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import {
-	Button,
-	ButtonGroup,
-	ToggleControl,
+	// Button,
+	// ButtonGroup,
+	CustomSelectControl,
+	// Flex,
+	// FlexItem,
+	// ToggleControl,
 	PanelBody,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, createPortal } from '@wordpress/element';
@@ -28,7 +33,10 @@ import { InspectorControls } from '../components';
 import useSetting from '../components/use-setting';
 import { LayoutStyle } from '../components/block-list/layout';
 import BlockList from '../components/block-list';
-import { getLayoutType, getLayoutTypes } from '../layouts';
+import {
+	getLayoutType,
+	// getLayoutTypes
+} from '../layouts';
 
 const layoutBlockSupportKey = '__experimentalLayout';
 
@@ -138,7 +146,7 @@ function LayoutPanel( {
 	name: blockName,
 } ) {
 	const { layout } = attributes;
-	const defaultThemeLayout = useSetting( 'layout' );
+	// const defaultThemeLayout = useSetting( 'layout' );
 	const { themeSupportsLayout, isContentLocked } = useSelect(
 		( select ) => {
 			const { getSettings, __unstableGetContentLockingParent } =
@@ -157,9 +165,9 @@ function LayoutPanel( {
 		{}
 	);
 	const {
-		allowSwitching,
+		// allowSwitching,
 		allowEditing = true,
-		allowInheriting = true,
+		// allowInheriting = true,
 		default: defaultBlockLayout,
 	} = layoutBlockSupport;
 
@@ -170,20 +178,21 @@ function LayoutPanel( {
 	// Only show the inherit toggle if it's supported,
 	// a default theme layout is set (e.g. one that provides `contentSize` and/or `wideSize` values),
 	// and either the default / flow or the constrained layout type is in use, as the toggle switches from one to the other.
-	const showInheritToggle = !! (
-		allowInheriting &&
-		!! defaultThemeLayout &&
-		( ! layout?.type ||
-			layout?.type === 'default' ||
-			layout?.type === 'constrained' ||
-			layout?.inherit )
-	);
+	// const showInheritToggle = !! (
+	// 	allowInheriting &&
+	// 	!! defaultThemeLayout &&
+	// 	( ! layout?.type ||
+	// 		layout?.type === 'default' ||
+	// 		layout?.type === 'constrained' ||
+	// 		layout?.inherit )
+	// );
 
 	const usedLayout = layout || defaultBlockLayout || {};
 	const {
 		inherit = false,
 		type = 'default',
 		contentSize = null,
+		orientation = 'horizontal',
 	} = usedLayout;
 	/**
 	 * `themeSupportsLayout` is only relevant to the `default/flow` or
@@ -200,18 +209,116 @@ function LayoutPanel( {
 	const constrainedType = getLayoutType( 'constrained' );
 	const displayControlsForLegacyLayouts =
 		! usedLayout.type && ( contentSize || inherit );
-	const hasContentSizeOrLegacySettings = !! inherit || !! contentSize;
+	// const hasContentSizeOrLegacySettings = !! inherit || !! contentSize;
 
-	const onChangeType = ( newType ) =>
-		setAttributes( { layout: { type: newType } } );
+	const onChangeType = ( newType ) => {
+		if ( newType === 'stack' ) {
+			const { innerWidth } = usedLayout;
+			if ( innerWidth === 'fit' ) {
+				setAttributes( {
+					layout: {
+						...usedLayout,
+						type: 'flex',
+						orientation: 'vertical',
+					},
+				} );
+			} else if ( innerWidth === 'theme' ) {
+				setAttributes( {
+					layout: {
+						type: 'constrained',
+					},
+				} );
+			} else {
+				setAttributes( { layout: { type: 'default' } } );
+			}
+		} else {
+			setAttributes( { layout: { ...usedLayout, type: newType } } );
+		}
+	};
+
+	const onChangeInnerWidth = ( newInnerWidth ) => {
+		const {
+			selectedItem: { key },
+		} = newInnerWidth;
+		if ( key === 'theme' ) {
+			setAttributes( {
+				layout: { ...usedLayout, type: 'constrained', innerWidth: key },
+			} );
+		} else if ( key === 'fit' ) {
+			if (
+				usedLayout.type === 'constrained' ||
+				usedLayout.type === 'default'
+			) {
+				setAttributes( {
+					layout: {
+						...usedLayout,
+						type: 'flex',
+						orientation: 'vertical',
+						innerWidth: key,
+					},
+				} );
+			} else {
+				setAttributes( {
+					layout: { ...usedLayout, type: 'flex', innerWidth: key },
+				} );
+			}
+		} else {
+			setAttributes( {
+				layout: { ...usedLayout, innerWidth: key },
+			} );
+		}
+	};
+
 	const onChangeLayout = ( newLayout ) =>
 		setAttributes( { layout: newLayout } );
+
+	const innerWidthOptions = [
+		{
+			key: 'fill',
+			name: __( 'Fill' ),
+		},
+		{
+			key: 'fit',
+			name: __( 'Fit' ),
+		},
+		{
+			key: 'theme',
+			name: __( 'Theme' ),
+		},
+		// {
+		// 	key: 'custom',
+		// 	name: __( 'Custom' ),
+		// },
+	];
+
+	// const alignmentOptions = [
+	// 	{
+	// 		key: 'flex-start',
+	// 		name: __( 'Top' ),
+	// 	},
+	// 	{
+	// 		key: 'center',
+	// 		name: __( 'Middle' ),
+	// 	},
+	// 	{
+	// 		key: 'flex-end',
+	// 		name: __( 'Bottom' ),
+	// 	},
+	// 	{
+	// 		key: 'space-between',
+	// 		name: __( 'Space Between' ),
+	// 	},
+	// 	{
+	// 		key: 'stretch',
+	// 		name: __( 'Stretch' ),
+	// 	},
+	// ];
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Layout' ) }>
-					{ showInheritToggle && (
+					{ /* { showInheritToggle && (
 						<>
 							<ToggleControl
 								__nextHasNoMarginBottom
@@ -245,22 +352,95 @@ function LayoutPanel( {
 								}
 							/>
 						</>
-					) }
+					) } */ }
 
-					{ ! inherit && allowSwitching && (
+					{ /* { ! inherit && allowSwitching && (
 						<LayoutTypeSwitcher
 							type={ type }
 							onChange={ onChangeType }
 						/>
-					) }
+					) } */ }
 
-					{ layoutType && layoutType.name !== 'default' && (
-						<layoutType.inspectorControls
-							layout={ usedLayout }
-							onChange={ onChangeLayout }
-							layoutBlockSupport={ layoutBlockSupport }
+					<ToggleGroupControl
+						__nextHasNoMarginBottom
+						size={ '__unstable-large' }
+						label={ __( 'Layout direction' ) }
+						value={
+							type === 'default' ||
+							type === 'constrained' ||
+							( type === 'flex' && orientation === 'vertical' )
+								? 'stack'
+								: type
+						}
+						onChange={ onChangeType }
+						isBlock={ true }
+					>
+						<ToggleGroupControlOption
+							key={ 'stack' }
+							value="stack"
+							label={ __( 'Stack' ) }
 						/>
-					) }
+						<ToggleGroupControlOption
+							key={ 'row' }
+							value="flex"
+							label={ __( 'Row' ) }
+						/>
+						<ToggleGroupControlOption
+							key={ 'grid' }
+							value="grid"
+							label={ __( 'Grid' ) }
+						/>
+					</ToggleGroupControl>
+
+					<CustomSelectControl
+						__nextUnconstrainedWidth
+						label="Inner block width"
+						options={ innerWidthOptions }
+						onChange={ onChangeInnerWidth }
+					/>
+					{ /* <p>Align</p>
+					<Flex>
+						<FlexItem>
+							<CustomSelectControl
+								__nextUnconstrainedWidth
+								label="Vertical"
+								options={ alignmentOptions }
+								onChange={ ( { selectedItem } ) => {
+									setAttributes( {
+										layout: {
+											...usedLayout,
+											verticalAlignment: selectedItem.key,
+										},
+									} );
+								} }
+							/>
+						</FlexItem>
+						<FlexItem>
+							<CustomSelectControl
+								__nextUnconstrainedWidth
+								label="Horizontal"
+								options={ alignmentOptions }
+								onChange={ ( { selectedItem } ) =>
+									setAttributes( {
+										layout: {
+											...usedLayout,
+											justifyContent: selectedItem.key,
+										},
+									} )
+								}
+							/>
+						</FlexItem>
+					</Flex> */ }
+
+					{ layoutType &&
+						layoutType.name !== 'default' &&
+						layoutType.name !== 'constrained' && (
+							<layoutType.inspectorControls
+								layout={ usedLayout }
+								onChange={ onChangeLayout }
+								layoutBlockSupport={ layoutBlockSupport }
+							/>
+						) }
 					{ constrainedType && displayControlsForLegacyLayouts && (
 						<constrainedType.inspectorControls
 							layout={ usedLayout }
@@ -281,23 +461,23 @@ function LayoutPanel( {
 	);
 }
 
-function LayoutTypeSwitcher( { type, onChange } ) {
-	return (
-		<ButtonGroup>
-			{ getLayoutTypes().map( ( { name, label } ) => {
-				return (
-					<Button
-						key={ name }
-						isPressed={ type === name }
-						onClick={ () => onChange( name ) }
-					>
-						{ label }
-					</Button>
-				);
-			} ) }
-		</ButtonGroup>
-	);
-}
+// function LayoutTypeSwitcher( { type, onChange } ) {
+// 	return (
+// 		<ButtonGroup>
+// 			{ getLayoutTypes().map( ( { name, label } ) => {
+// 				return (
+// 					<Button
+// 						key={ name }
+// 						isPressed={ type === name }
+// 						onClick={ () => onChange( name ) }
+// 					>
+// 						{ label }
+// 					</Button>
+// 				);
+// 			} ) }
+// 		</ButtonGroup>
+// 	);
+// }
 
 /**
  * Filters registered block settings, extending attributes to include `layout`.
