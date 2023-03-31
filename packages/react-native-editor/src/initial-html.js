@@ -233,4 +233,4 @@ export const otherBlocks = `
 <!-- wp:rss /-->
 `;
 
-export default textBlocks + mediaBlocks + otherBlocks;
+export default '';
