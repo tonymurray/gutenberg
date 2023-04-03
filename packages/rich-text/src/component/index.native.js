@@ -344,7 +344,6 @@ export class RichText extends Component {
 
 		// We don't want to refresh if our goal is just to create a record.
 		if ( refresh ) {
-			performance.mark( 'foobar-start' );
 			this.props.onChange( formattedContent );
 		}
 	}

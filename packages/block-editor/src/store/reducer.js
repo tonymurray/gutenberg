@@ -284,6 +284,7 @@ const withBlockTree =
 				);
 				break;
 			case 'UPDATE_BLOCK_ATTRIBUTES': {
+				performance.mark( 'foobar-start' );
 				newState.tree = new Map( newState.tree );
 				action.clientIds.forEach( ( clientId ) => {
 					newState.tree.set( clientId, {
@@ -295,6 +296,12 @@ const withBlockTree =
 					newState,
 					action.clientIds,
 					false
+				);
+				performance.mark( 'foobar-end' );
+				performance.measure(
+					'foobar-duration',
+					'foobar-start',
+					'foobar-end'
 				);
 				break;
 			}
