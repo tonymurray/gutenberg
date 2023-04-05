@@ -85,7 +85,7 @@ function useHasChildLayout( settings ) {
 	} = settings?.parentLayout ?? {};
 
 	const support =
-		( defaultParentLayoutType === 'flex' || parentLayoutType === 'flex' ) &&
+		( defaultParentLayoutType || parentLayoutType ) &&
 		allowSizingOnChildren;
 
 	return !! settings?.layout && support;
@@ -205,6 +205,7 @@ export default function DimensionsPanel( {
 	// Special case because the layout controls are not part of the dimensions panel
 	// in global styles but not in block inspector.
 	includeLayoutControls = false,
+	updateParentLayoutType,
 } ) {
 	const decodeValue = ( rawValue ) =>
 		getValueFromVariable( { settings }, '', rawValue );
@@ -617,6 +618,7 @@ export default function DimensionsPanel( {
 						value={ childLayout }
 						onChange={ setChildLayout }
 						parentLayout={ settings?.parentLayout }
+						updateParentLayoutType={ updateParentLayoutType }
 					/>
 				</VStack>
 			) }
