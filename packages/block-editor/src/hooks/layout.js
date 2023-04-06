@@ -280,7 +280,7 @@ function LayoutPanel( {
 				...style,
 				spacing: {
 					...style?.spacing,
-					blockGap: newGap,
+					blockGap: `${ newGap }px`,
 				},
 			},
 		} );
@@ -314,9 +314,28 @@ function LayoutPanel( {
 		},
 	];
 
-	const alignmentOptions = [
+	const horizontalAlignmentOptions = [
 		{
-			key: 'flex-start',
+			key: 'left',
+			name: __( 'Left' ),
+		},
+		{
+			key: 'center',
+			name: __( 'Middle' ),
+		},
+		{
+			key: 'right',
+			name: __( 'Right' ),
+		},
+		{
+			key: 'space-between',
+			name: __( 'Space Between' ),
+		},
+	];
+
+	const verticalAlignmentOptions = [
+		{
+			key: 'top',
 			name: __( 'Top' ),
 		},
 		{
@@ -324,16 +343,12 @@ function LayoutPanel( {
 			name: __( 'Middle' ),
 		},
 		{
-			key: 'flex-end',
+			key: 'bottom',
 			name: __( 'Bottom' ),
 		},
 		{
 			key: 'space-between',
 			name: __( 'Space Between' ),
-		},
-		{
-			key: 'stretch',
-			name: __( 'Stretch' ),
 		},
 	];
 
@@ -435,7 +450,7 @@ function LayoutPanel( {
 							<CustomSelectControl
 								__nextUnconstrainedWidth
 								label="Vertical"
-								options={ alignmentOptions }
+								options={ verticalAlignmentOptions }
 								onChange={ ( { selectedItem } ) => {
 									setAttributes( {
 										layout: {
@@ -450,7 +465,7 @@ function LayoutPanel( {
 							<CustomSelectControl
 								__nextUnconstrainedWidth
 								label="Horizontal"
-								options={ alignmentOptions }
+								options={ horizontalAlignmentOptions }
 								onChange={ ( { selectedItem } ) =>
 									setAttributes( {
 										layout: {
@@ -470,27 +485,31 @@ function LayoutPanel( {
 							onChange={ onChangeInnerWidth }
 						/>
 					</div>
-					<div style={ { marginTop: '24px' } }>
-						<ToggleGroupControl
-							__nextHasNoMarginBottom
-							size={ '__unstable-large' }
-							label={ __( 'Wrap' ) }
-							value={ flexWrap }
-							onChange={ onChangeWrap }
-							isBlock={ true }
-						>
-							<ToggleGroupControlOption
-								key={ 'wrap' }
-								value="wrap"
-								label={ __( 'Yes' ) }
-							/>
-							<ToggleGroupControlOption
-								key={ 'nowrap' }
-								value="nowrap"
-								label={ __( 'No' ) }
-							/>
-						</ToggleGroupControl>
-					</div>
+					{ layoutType &&
+						layoutType.name === 'grid' &&
+						orientation === 'horizontal' && (
+							<div style={ { marginTop: '24px' } }>
+								<ToggleGroupControl
+									__nextHasNoMarginBottom
+									size={ '__unstable-large' }
+									label={ __( 'Wrap' ) }
+									value={ flexWrap }
+									onChange={ onChangeWrap }
+									isBlock={ true }
+								>
+									<ToggleGroupControlOption
+										key={ 'wrap' }
+										value="wrap"
+										label={ __( 'Yes' ) }
+									/>
+									<ToggleGroupControlOption
+										key={ 'nowrap' }
+										value="nowrap"
+										label={ __( 'No' ) }
+									/>
+								</ToggleGroupControl>
+							</div>
+						) }
 					{ /* { layoutType &&
 						layoutType.name !== 'default' &&
 						layoutType.name !== 'constrained' && (
