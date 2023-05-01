@@ -521,6 +521,28 @@ function LayoutPanel( {
 								layoutBlockSupport={ layoutBlockSupport }
 							/>
 						) }
+						{ ( ( type === 'flex' && orientation === 'vertical' ) ||
+							type === 'default' ||
+							type === 'constrained' ) && (
+							<ToggleGroupControl
+								__nextHasNoMarginBottom
+								style={ { marginBottom: 0, marginTop: 0 } }
+								label={ __( 'Content width' ) }
+								value={ usedLayout?.verticalAlignment || 'top' }
+								onChange={ onChangeInnerWidth }
+								isBlock={ true }
+								className="components-toggle-group-control__full-width"
+							>
+								{ innerWidthOptions.map( ( option ) => (
+									<ToggleGroupControlOptionIcon
+										key={ option.value }
+										icon={ option.icon }
+										value={ option.value }
+										label={ option.label }
+									/>
+								) ) }
+							</ToggleGroupControl>
+						) }
 						<HStack spacing={ 2 } justify="stretch">
 							{ type === 'flex' && (
 								<FlexBlock>
@@ -594,28 +616,7 @@ function LayoutPanel( {
 								) }
 							</FlexBlock>
 						</HStack>
-						{ ( ( type === 'flex' && orientation === 'vertical' ) ||
-							type === 'default' ||
-							type === 'constrained' ) && (
-							<ToggleGroupControl
-								__nextHasNoMarginBottom
-								style={ { marginBottom: 0, marginTop: 0 } }
-								label={ __( 'Content width' ) }
-								value={ usedLayout?.verticalAlignment || 'top' }
-								onChange={ onChangeInnerWidth }
-								isBlock={ true }
-								className="components-toggle-group-control__full-width"
-							>
-								{ innerWidthOptions.map( ( option ) => (
-									<ToggleGroupControlOptionIcon
-										key={ option.value }
-										icon={ option.icon }
-										value={ option.value }
-										label={ option.label }
-									/>
-								) ) }
-							</ToggleGroupControl>
-						) }
+
 						{ type === 'flex' && orientation === 'horizontal' && (
 							<div style={ { marginTop: '24px' } }>
 								<ToggleGroupControl
