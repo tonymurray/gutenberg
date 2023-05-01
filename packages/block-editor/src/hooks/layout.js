@@ -567,7 +567,10 @@ function LayoutPanel( {
 											marginTop: 0,
 										} }
 										label={ __( 'Horizontal' ) }
-										value={ defaultHorizontalAlign }
+										value={
+											usedLayout?.justifyContent ||
+											defaultHorizontalAlign
+										}
 										isBlock={ true }
 										onChange={ ( selectedItem ) => {
 											onChangeLayout( {
