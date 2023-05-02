@@ -413,7 +413,13 @@ function LayoutPanel( {
 				setAttributes( { layout: { type: 'default' } } );
 			}
 		} else {
-			setAttributes( { layout: { ...usedLayout, type: newType } } );
+			setAttributes( {
+				layout: {
+					...usedLayout,
+					type: newType,
+					orientation: 'horizontal',
+				},
+			} );
 		}
 	};
 
