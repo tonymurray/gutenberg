@@ -19,7 +19,7 @@ import { useSelectObject } from './use-select-object';
 import { useInputAndSelection } from './use-input-and-selection';
 import { useSelectionChangeCompat } from './use-selection-change-compat';
 import { useDelete } from './use-delete';
-import { RichTextValue } from '../value';
+import { RichTextString } from '../value';
 
 export function useRichText( {
 	value = '',
@@ -144,7 +144,7 @@ export function useRichText( {
 		if ( disableFormats ) {
 			_value.current = newRecord.text;
 		} else {
-			_value.current = new RichTextValue( {
+			_value.current = new RichTextString( {
 				value: __unstableBeforeSerialize
 					? {
 							...newRecord,

@@ -2,8 +2,7 @@
  * Internal dependencies
  */
 import { toHTMLString } from './to-html-string';
-
-export class RichTextValue {
+export class RichTextString {
 	constructor( { value, ...settings } ) {
 		for ( const key in value ) {
 			Object.defineProperty( this, key, {
@@ -42,20 +41,20 @@ Object.getOwnPropertyNames( String.prototype )
 			prop !== 'toString'
 	)
 	.forEach( ( method ) => {
-		Object.defineProperty( RichTextValue.prototype, method, {
+		Object.defineProperty( RichTextString.prototype, method, {
 			value() {
 				return this.toString()[ method ]( ...arguments );
 			},
 		} );
 	} );
 
-Object.defineProperty( RichTextValue.prototype, 'length', {
+Object.defineProperty( RichTextString.prototype, 'length', {
 	get() {
 		return this.toString().length;
 	},
 } );
 
-Object.defineProperty( RichTextValue.prototype, 'toJSON', {
+Object.defineProperty( RichTextString.prototype, 'toJSON', {
 	value() {
 		return this.toString();
 	},
