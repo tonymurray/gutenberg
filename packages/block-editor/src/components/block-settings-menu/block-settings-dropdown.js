@@ -49,6 +49,7 @@ export function BlockSettingsDropdown( {
 	clientIds,
 	__experimentalSelectBlock,
 	children,
+	popoverProps,
 	__unstableDisplayLocation,
 	...props
 } ) {
@@ -210,7 +211,7 @@ export function BlockSettingsDropdown( {
 					icon={ moreVertical }
 					label={ __( 'Options' ) }
 					className="block-editor-block-settings-menu"
-					popoverProps={ POPOVER_PROPS }
+					popoverProps={ { ...POPOVER_PROPS, ...popoverProps } }
 					noIcons
 					{ ...props }
 				>
