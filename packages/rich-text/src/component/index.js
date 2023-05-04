@@ -19,7 +19,7 @@ import { useSelectObject } from './use-select-object';
 import { useInputAndSelection } from './use-input-and-selection';
 import { useSelectionChangeCompat } from './use-selection-change-compat';
 import { useDelete } from './use-delete';
-import { RichTextString } from '../value';
+import { createRichTextString } from '../value';
 
 export function useRichText( {
 	value = '',
@@ -88,7 +88,7 @@ export function useRichText( {
 							multilineTag === 'li' ? [ 'ul', 'ol' ] : undefined,
 						preserveWhiteSpace,
 				  } )
-				: { ...value };
+				: value.value;
 		if ( disableFormats ) {
 			record.current.formats = Array( value.length );
 			record.current.replacements = Array( value.length );
@@ -144,7 +144,7 @@ export function useRichText( {
 		if ( disableFormats ) {
 			_value.current = newRecord.text;
 		} else {
-			_value.current = new RichTextString( {
+			_value.current = createRichTextString( {
 				value: __unstableBeforeSerialize
 					? {
 							...newRecord,
