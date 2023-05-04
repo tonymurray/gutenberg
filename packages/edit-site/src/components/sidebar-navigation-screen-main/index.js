@@ -17,6 +17,11 @@ import SidebarNavigationScreen from '../sidebar-navigation-screen';
 import SidebarNavigationItem from '../sidebar-navigation-item';
 
 export default function SidebarNavigationScreenMain() {
+	const { getNavigationFallbackId } = useSelect( coreStore );
+
+	// Immediately trigger creation/fetching of fallback.
+	getNavigationFallbackId();
+
 	const hasNavigationMenus = useSelect( ( select ) => {
 		// The query needs to be the same as in the "SidebarNavigationScreenNavigationMenus" component,
 		// to avoid double network calls.
@@ -32,7 +37,7 @@ export default function SidebarNavigationScreenMain() {
 		);
 
 		return navigationMenus?.length > 0;
-	} );
+	}, [] );
 
 	const showNavigationScreen = process.env.IS_GUTENBERG_PLUGIN
 		? hasNavigationMenus
