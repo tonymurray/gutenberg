@@ -47,36 +47,44 @@ function SidebarNavigationScreenWrapper( { children, actions } ) {
 
 export default function SidebarNavigationScreenNavigationMenus() {
 	const history = useHistory();
-	const { navigationMenus, hasResolvedNavigationMenus, storedSettings } =
-		useSelect( ( select ) => {
-			const { getSettings } = unlock( select( editSiteStore ) );
-			const { getEntityRecords, hasFinishedResolution } =
-				select( coreStore );
+	const {
+		navigationMenus,
+		hasResolvedNavigationMenus,
+		storedSettings,
+		navigationFallbackId,
+	} = useSelect( ( select ) => {
+		const { getSettings } = unlock( select( editSiteStore ) );
+		const {
+			getEntityRecords,
+			hasFinishedResolution,
+			getNavigationFallbackId,
+		} = select( coreStore );
 
-			const navigationMenusQuery = [
-				'postType',
-				'wp_navigation',
-				NAVIGATION_MENUS_QUERY,
-			];
-			return {
-				storedSettings: getSettings( false ),
-				navigationMenus: getEntityRecords( ...navigationMenusQuery ),
-				hasResolvedNavigationMenus: hasFinishedResolution(
-					'getEntityRecords',
-					navigationMenusQuery
-				),
-			};
-		}, [] );
+		const navigationMenusQuery = [
+			'postType',
+			'wp_navigation',
+			NAVIGATION_MENUS_QUERY,
+		];
+		return {
+			navigationFallbackId: getNavigationFallbackId(),
+			storedSettings: getSettings( false ),
+			navigationMenus: getEntityRecords( ...navigationMenusQuery ),
+			hasResolvedNavigationMenus: hasFinishedResolution(
+				'getEntityRecords',
+				navigationMenusQuery
+			),
+		};
+	}, [] );
 
-	const firstNavigationMenu = navigationMenus?.[ 0 ]?.id;
 	const blocks = useMemo( () => {
 		return [
-			createBlock( 'core/navigation', { ref: firstNavigationMenu } ),
+			createBlock( 'core/navigation', { ref: navigationFallbackId } ),
 		];
-	}, [ firstNavigationMenu ] );
+	}, [ navigationFallbackId ] );
 
 	const isLoading = ! hasResolvedNavigationMenus;
-	const hasNavigationMenus = !! navigationMenus?.length;
+	const hasNavigationMenus =
+		navigationFallbackId || !! navigationMenus?.length;
 
 	const onSelect = useCallback(
 		( selectedBlock ) => {
