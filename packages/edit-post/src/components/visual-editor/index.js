@@ -31,7 +31,12 @@ import {
 	__experimentaluseLayoutStyles as useLayoutStyles,
 } from '@wordpress/block-editor';
 import { useEffect, useRef, useMemo } from '@wordpress/element';
-import { Button, __unstableMotion as motion } from '@wordpress/components';
+import {
+	__experimentalUseSlot as useSlot,
+	Slot,
+	Button,
+	__unstableMotion as motion,
+} from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMergeRefs } from '@wordpress/compose';
 import { arrowLeft } from '@wordpress/icons';
@@ -102,6 +107,24 @@ function getPostContentAttributes( blocks ) {
 			}
 		}
 	}
+}
+
+function PluginPreviewContent( { children } ) {
+	const previewContent = children;
+	const previewId = useSelect(
+		( select ) =>
+			select( editPostStore ).__experimentalGetPreviewDeviceType(),
+		[]
+	);
+	const previewSlotName = `PluginPreview/${ previewId }`;
+	const slot = useSlot( previewSlotName );
+	const hasFills = Boolean( slot.fills && slot.fills.length );
+
+	if ( ! hasFills ) {
+		return previewContent;
+	}
+
+	return <Slot name={ previewSlotName } fillProps={ { previewContent } } />;
 }
 
 export default function VisualEditor( { styles } ) {
@@ -366,72 +389,74 @@ export default function VisualEditor( { styles } ) {
 					initial={ desktopCanvasStyles }
 					className={ previewMode }
 				>
-					<MaybeIframe
-						shouldIframe={
-							( isGutenbergPlugin &&
-								isBlockBasedTheme &&
-								! hasMetaBoxes ) ||
-							isTemplateMode ||
-							deviceType === 'Tablet' ||
-							deviceType === 'Mobile'
-						}
-						contentRef={ contentRef }
-						styles={ styles }
-					>
-						{ themeSupportsLayout &&
-							! themeHasDisabledLayoutStyles &&
-							! isTemplateMode && (
-								<>
-									<LayoutStyle
-										selector=".edit-post-visual-editor__post-title-wrapper, .block-editor-block-list__layout.is-root-container"
-										layout={ fallbackLayout }
-										layoutDefinitions={
-											globalLayoutSettings?.definitions
-										}
-									/>
-									{ align && (
-										<LayoutStyle css={ alignCSS } />
-									) }
-									{ postContentLayoutStyles && (
+					<PluginPreviewContent>
+						<MaybeIframe
+							shouldIframe={
+								( isGutenbergPlugin &&
+									isBlockBasedTheme &&
+									! hasMetaBoxes ) ||
+								isTemplateMode ||
+								deviceType === 'Tablet' ||
+								deviceType === 'Mobile'
+							}
+							contentRef={ contentRef }
+							styles={ styles }
+						>
+							{ themeSupportsLayout &&
+								! themeHasDisabledLayoutStyles &&
+								! isTemplateMode && (
+									<>
 										<LayoutStyle
-											layout={ postContentLayout }
-											css={ postContentLayoutStyles }
+											selector=".edit-post-visual-editor__post-title-wrapper, .block-editor-block-list__layout.is-root-container"
+											layout={ fallbackLayout }
 											layoutDefinitions={
 												globalLayoutSettings?.definitions
 											}
 										/>
-									) }
-								</>
-							) }
-						{ ! isTemplateMode && (
-							<div
-								className={ classnames(
-									'edit-post-visual-editor__post-title-wrapper',
-									{
-										'is-focus-mode': isFocusMode,
-										'has-global-padding':
-											hasRootPaddingAwareAlignments,
-									}
+										{ align && (
+											<LayoutStyle css={ alignCSS } />
+										) }
+										{ postContentLayoutStyles && (
+											<LayoutStyle
+												layout={ postContentLayout }
+												css={ postContentLayoutStyles }
+												layoutDefinitions={
+													globalLayoutSettings?.definitions
+												}
+											/>
+										) }
+									</>
 								) }
-								contentEditable={ false }
+							{ ! isTemplateMode && (
+								<div
+									className={ classnames(
+										'edit-post-visual-editor__post-title-wrapper',
+										{
+											'is-focus-mode': isFocusMode,
+											'has-global-padding':
+												hasRootPaddingAwareAlignments,
+										}
+									) }
+									contentEditable={ false }
+								>
+									<PostTitle ref={ titleRef } />
+								</div>
+							) }
+							<RecursionProvider
+								blockName={ wrapperBlockName }
+								uniqueId={ wrapperUniqueId }
 							>
-								<PostTitle ref={ titleRef } />
-							</div>
-						) }
-						<RecursionProvider
-							blockName={ wrapperBlockName }
-							uniqueId={ wrapperUniqueId }
-						>
-							<BlockList
-								className={
-									isTemplateMode
-										? 'wp-site-blocks'
-										: `${ blockListLayoutClass } wp-block-post-content` // Ensure root level blocks receive default/flow blockGap styling rules.
-								}
-								__experimentalLayout={ blockListLayout }
-							/>
-						</RecursionProvider>
-					</MaybeIframe>
+								<BlockList
+									className={
+										isTemplateMode
+											? 'wp-site-blocks'
+											: `${ blockListLayoutClass } wp-block-post-content` // Ensure root level blocks receive default/flow blockGap styling rules.
+									}
+									__experimentalLayout={ blockListLayout }
+								/>
+							</RecursionProvider>
+						</MaybeIframe>
+					</PluginPreviewContent>
 				</motion.div>
 			</motion.div>
 		</BlockTools>
