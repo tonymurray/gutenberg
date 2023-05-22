@@ -7,10 +7,9 @@ import {
 	BlockList,
 	BlockTools,
 } from '@wordpress/block-editor';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
+import { useSelect } from '@wordpress/data';
 import { VisuallyHidden } from '@wordpress/components';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { store as coreStore } from '@wordpress/core-data';
 
 /**
@@ -35,7 +34,7 @@ const PAGES_QUERY = [
 	},
 ];
 
-export default function NavigationMenuContent( { rootClientId, onSelect } ) {
+export default function NavigationMenuContent( { rootClientId } ) {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const { clientIdsTree, shouldKeepLoading, isSinglePageList } = useSelect(
 		( select ) => {
@@ -70,8 +69,6 @@ export default function NavigationMenuContent( { rootClientId, onSelect } ) {
 		},
 		[ rootClientId ]
 	);
-	const { replaceBlock, __unstableMarkNextChangeAsNotPersistent } =
-		useDispatch( blockEditorStore );
 
 	// Delay loading stop by 50ms to avoid flickering.
 	useEffect( () => {
@@ -93,23 +90,6 @@ export default function NavigationMenuContent( { rootClientId, onSelect } ) {
 	}, [ shouldKeepLoading, clientIdsTree, isLoading ] );
 
 	const { PrivateListView } = unlock( blockEditorPrivateApis );
-	const offCanvasOnselect = useCallback(
-		( block ) => {
-			if (
-				block.name === 'core/navigation-link' &&
-				! block.attributes.url
-			) {
-				__unstableMarkNextChangeAsNotPersistent();
-				replaceBlock(
-					block.clientId,
-					createBlock( 'core/navigation-link', block.attributes )
-				);
-			} else {
-				onSelect( block );
-			}
-		},
-		[ onSelect, __unstableMarkNextChangeAsNotPersistent, replaceBlock ]
-	);
 
 	// The hidden block is needed because it makes block edit side effects trigger.
 	// For example a navigation page list load its items has an effect on edit to load its items.
@@ -122,7 +102,6 @@ export default function NavigationMenuContent( { rootClientId, onSelect } ) {
 							? clientIdsTree[ 0 ].innerBlocks
 							: clientIdsTree
 					}
-					onSelect={ offCanvasOnselect }
 					blockSettingsMenu={ LeafMoreMenu }
 					showAppender={ false }
 				/>

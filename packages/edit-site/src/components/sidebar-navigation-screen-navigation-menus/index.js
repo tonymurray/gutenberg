@@ -2,12 +2,11 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import { BlockEditorProvider } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
-import { privateApis as routerPrivateApis } from '@wordpress/router';
 
 /**
  * Internal dependencies
@@ -16,12 +15,6 @@ import SidebarNavigationScreen from '../sidebar-navigation-screen';
 import NavigationMenuContent from './navigation-menu-content';
 import { unlock } from '../../private-apis';
 import { store as editSiteStore } from '../../store';
-import {
-	isPreviewingTheme,
-	currentlyPreviewingTheme,
-} from '../../utils/is-previewing-theme';
-
-const { useHistory } = unlock( routerPrivateApis );
 
 const noop = () => {};
 const NAVIGATION_MENUS_QUERY = {
@@ -45,7 +38,6 @@ function SidebarNavigationScreenWrapper( { children, actions } ) {
 }
 
 export default function SidebarNavigationScreenNavigationMenus() {
-	const history = useHistory();
 	const { navigationMenus, hasResolvedNavigationMenus, storedSettings } =
 		useSelect( ( select ) => {
 			const { getSettings } = unlock( select( editSiteStore ) );
@@ -76,36 +68,6 @@ export default function SidebarNavigationScreenNavigationMenus() {
 
 	const hasNavigationMenus = !! navigationMenus?.length;
 
-	const onSelect = useCallback(
-		( selectedBlock ) => {
-			const { attributes, name } = selectedBlock;
-			if (
-				attributes.kind === 'post-type' &&
-				attributes.id &&
-				attributes.type &&
-				history
-			) {
-				history.push( {
-					postType: attributes.type,
-					postId: attributes.id,
-					...( isPreviewingTheme() && {
-						theme_preview: currentlyPreviewingTheme(),
-					} ),
-				} );
-			}
-			if ( name === 'core/page-list-item' && attributes.id && history ) {
-				history.push( {
-					postType: 'page',
-					postId: attributes.id,
-					...( isPreviewingTheme() && {
-						theme_preview: currentlyPreviewingTheme(),
-					} ),
-				} );
-			}
-		},
-		[ history ]
-	);
-
 	if ( hasResolvedNavigationMenus && ! hasNavigationMenus ) {
 		return (
 			<SidebarNavigationScreenWrapper>
@@ -125,7 +87,6 @@ export default function SidebarNavigationScreenNavigationMenus() {
 				<div className="edit-site-sidebar-navigation-screen-navigation-menus__content">
 					<NavigationMenuContent
 						rootClientId={ blocks[ 0 ].clientId }
-						onSelect={ onSelect }
 					/>
 				</div>
 			</SidebarNavigationScreenWrapper>
