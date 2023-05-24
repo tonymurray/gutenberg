@@ -27,5 +27,18 @@
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"rnx-kit": {
+		"kitType": "app",
+		"alignDeps": {
+			"requirements": [
+				"react-native@*"
+			],
+			"capabilities": [
+				"core",
+				"core-android",
+				"core-ios"
+			]
+		}
 	}
 }

@@ -368,5 +368,24 @@
 			"                                                `---'"
 		],
 		"welcome-build-command": "npm run dev"
+	},
+	"rnx-kit": {
+		"kitType": "app",
+		"alignDeps": {
+			"requirements": [
+				"react-native@0.69"
+			],
+			"capabilities": [
+				"babel-preset-react-native",
+				"core",
+				"core-android",
+				"core-ios",
+				"jest",
+				"metro-react-native-babel-transformer",
+				"react",
+				"react-dom",
+				"react-test-renderer"
+			]
+		}
 	}
 }

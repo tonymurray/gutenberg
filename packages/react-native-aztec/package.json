@@ -39,5 +39,19 @@
 		"clean-react": "rm -rf $TMPDIR/react-*; rm -rf $TMPDIR/react-native-packager-cache-*;",
 		"clean-watchman": "command -v watchman >/dev/null 2>&1 && watchman watch-del-all;",
 		"clean:install": "npm run clean && npm install"
+	},
+	"rnx-kit": {
+		"kitType": "app",
+		"alignDeps": {
+			"requirements": [
+				"react-native@*"
+			],
+			"capabilities": [
+				"core",
+				"core-android",
+				"core-ios",
+				"react"
+			]
+		}
 	}
 }
