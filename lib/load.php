@@ -111,7 +111,6 @@ if ( gutenberg_is_experiment_enabled( 'gutenberg-interactivity-api-core-blocks' 
 	require __DIR__ . '/experimental/interactivity-api/blocks.php';
 }
 
-
 // Fonts API.
 if ( ! class_exists( 'WP_Fonts' ) ) {
 	// Fonts API files.
