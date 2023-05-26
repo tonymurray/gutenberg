@@ -305,8 +305,6 @@ function LinkControl( {
 	// See https://github.com/WordPress/gutenberg/pull/33849/#issuecomment-932194927.
 	const showTextControl = hasLinkValue && hasTextControl;
 
-	const isEditing = ( isEditingLink || ! value ) && ! isCreatingPage;
-
 	return (
 		<div
 			tabIndex={ -1 }
@@ -349,7 +347,9 @@ function LinkControl( {
 						showInitialSuggestions={ showInitialSuggestions }
 						allowDirectEntry={ ! noDirectEntry }
 						showSuggestions={
-							hasLinkValue && valueHasChanges && showSuggestions
+							( ! hasLinkValue ||
+								( hasLinkValue && valueHasChanges ) ) &&
+							showSuggestions
 						}
 						suggestionsQuery={ suggestionsQuery }
 						withURLSuggestion={ ! noURLSuggestion }
@@ -370,7 +370,7 @@ function LinkControl( {
 				) }
 			</>
 
-			{ isEditing && (
+			{ hasLinkValue && ! isCreatingPage && (
 				<div className="block-editor-link-control__tools">
 					{ ( showSettings || showTextControl ) && (
 						<LinkControlSettingsDrawer
