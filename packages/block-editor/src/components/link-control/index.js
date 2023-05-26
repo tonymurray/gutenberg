@@ -348,7 +348,9 @@ function LinkControl( {
 						onSelect={ handleSelectSuggestion }
 						showInitialSuggestions={ showInitialSuggestions }
 						allowDirectEntry={ ! noDirectEntry }
-						showSuggestions={ showSuggestions }
+						showSuggestions={
+							hasLinkValue && valueHasChanges && showSuggestions
+						}
 						suggestionsQuery={ suggestionsQuery }
 						withURLSuggestion={ ! noURLSuggestion }
 						createSuggestionButtonText={
