@@ -296,8 +296,7 @@ function LinkControl( {
 
 	const currentInputIsEmpty = ! currentUrlInputValue?.trim()?.length;
 
-	const shownUnlinkControl =
-		onRemove && value && ! isEditingLink && ! isCreatingPage;
+	const shownUnlinkControl = onRemove && value && ! isCreatingPage;
 
 	const showSettings = !! settings?.length;
 
@@ -320,46 +319,6 @@ function LinkControl( {
 				</div>
 			) }
 
-			{ isEditing && (
-				<>
-					<div
-						className={ classnames( {
-							'block-editor-link-control__search-input-wrapper': true,
-							'has-text-control': showTextControl,
-						} ) }
-					>
-						<LinkControlSearchInput
-							currentLink={ value }
-							className="block-editor-link-control__field block-editor-link-control__search-input"
-							placeholder={ searchInputPlaceholder }
-							value={ currentUrlInputValue }
-							withCreateSuggestion={ withCreateSuggestion }
-							onCreateSuggestion={ createPage }
-							onChange={ setInternalURLInputValue }
-							onSelect={ handleSelectSuggestion }
-							showInitialSuggestions={ showInitialSuggestions }
-							allowDirectEntry={ ! noDirectEntry }
-							showSuggestions={ showSuggestions }
-							suggestionsQuery={ suggestionsQuery }
-							withURLSuggestion={ ! noURLSuggestion }
-							createSuggestionButtonText={
-								createSuggestionButtonText
-							}
-							useLabel={ showTextControl }
-						/>
-					</div>
-					{ errorMessage && (
-						<Notice
-							className="block-editor-link-control__search-error"
-							status="error"
-							isDismissible={ false }
-						>
-							{ errorMessage }
-						</Notice>
-					) }
-				</>
-			) }
-
 			{ value && ! isEditingLink && ! isCreatingPage && (
 				<LinkPreview
 					key={ value?.url } // force remount when URL changes to avoid race conditions for rich previews
@@ -370,6 +329,44 @@ function LinkControl( {
 					onRemove={ onRemove }
 				/>
 			) }
+
+			<>
+				<div
+					className={ classnames( {
+						'block-editor-link-control__search-input-wrapper': true,
+						'has-text-control': showTextControl,
+					} ) }
+				>
+					<LinkControlSearchInput
+						currentLink={ value }
+						className="block-editor-link-control__field block-editor-link-control__search-input"
+						placeholder={ searchInputPlaceholder }
+						value={ currentUrlInputValue }
+						withCreateSuggestion={ withCreateSuggestion }
+						onCreateSuggestion={ createPage }
+						onChange={ setInternalURLInputValue }
+						onSelect={ handleSelectSuggestion }
+						showInitialSuggestions={ showInitialSuggestions }
+						allowDirectEntry={ ! noDirectEntry }
+						showSuggestions={ showSuggestions }
+						suggestionsQuery={ suggestionsQuery }
+						withURLSuggestion={ ! noURLSuggestion }
+						createSuggestionButtonText={
+							createSuggestionButtonText
+						}
+						useLabel={ showTextControl }
+					/>
+				</div>
+				{ errorMessage && (
+					<Notice
+						className="block-editor-link-control__search-error"
+						status="error"
+						isDismissible={ false }
+					>
+						{ errorMessage }
+					</Notice>
+				) }
+			</>
 
 			{ isEditing && (
 				<div className="block-editor-link-control__tools">
