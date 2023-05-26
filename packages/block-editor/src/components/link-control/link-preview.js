@@ -37,7 +37,7 @@ export default function LinkPreview( {
 		( value && filterURLForDisplay( safeDecodeURI( value.url ), 16 ) ) ||
 		'';
 
-	const displayTitle = richData?.title || value?.title || displayURL;
+	const displayTitle = richData?.title || displayURL;
 
 	// url can be undefined if the href attribute is unset
 	const isEmptyURL = ! value?.url?.length;
