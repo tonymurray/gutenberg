@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import type gradientParser from 'gradient-parser';
+import type {
+	LinearGradientNode,
+	RepeatingLinearGradientNode,
+	GradientNode,
+} from 'gradient-parser';
 
 export type CustomGradientPickerProps = {
 	/**
@@ -33,15 +37,13 @@ export type CustomGradientPickerProps = {
 };
 
 export type GradientAnglePickerProps = {
-	gradientAST:
-		| gradientParser.LinearGradientNode
-		| gradientParser.RepeatingLinearGradientNode;
+	gradientAST: LinearGradientNode | RepeatingLinearGradientNode;
 	hasGradient: boolean;
 	onChange: ( gradient: string ) => void;
 };
 
 export type GradientTypePickerProps = {
-	gradientAST: gradientParser.GradientNode;
+	gradientAST: GradientNode;
 	hasGradient: boolean;
 	onChange: ( gradient: string ) => void;
 };
