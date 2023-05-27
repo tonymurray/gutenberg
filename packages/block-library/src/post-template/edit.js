@@ -10,16 +10,14 @@ import { memo, useMemo, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import {
-	BlockControls,
 	BlockContextProvider,
 	__experimentalUseBlockPreview as useBlockPreview,
 	useBlockProps,
 	useInnerBlocksProps,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
-import { Spinner, ToolbarGroup } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
-import { list, grid } from '@wordpress/icons';
 
 const TEMPLATE = [
 	[ 'core/post-title' ],
@@ -73,7 +71,6 @@ function PostTemplateBlockPreview( {
 const MemoizedPostTemplateBlockPreview = memo( PostTemplateBlockPreview );
 
 export default function PostTemplateEdit( {
-	setAttributes,
 	clientId,
 	context: {
 		query: {
@@ -101,7 +98,7 @@ export default function PostTemplateEdit( {
 		templateSlug,
 		previewPostType,
 	},
-	attributes: { layout, postsTagName: PostsTagName },
+	attributes: { layout, postsTagName: PostsTagName = 'ul' },
 	__unstableLayoutClassNames,
 } ) {
 	const { type: layoutType, columnCount = 3 } = layout || {};
