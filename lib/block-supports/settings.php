@@ -38,8 +38,7 @@ function _gutenberg_add_block_level_presets_class( $block_content, $block ) {
 	}
 
 	// return early if no settings are found on the block attributes.
-	$block_settings = _wp_array_get( $block, array( 'attrs', 'settings' ), null );
-	if ( empty( $block_settings ) ) {
+	if ( ! isset( $block['attrs']['settings'] ) || empty( $block['attrs']['settings'] ) ) {
 		return $block_content;
 	}
 
@@ -71,8 +70,7 @@ function _gutenberg_add_block_level_preset_styles( $pre_render, $block ) {
 	}
 
 	// return early if no settings are found on the block attributes.
-	$block_settings = _wp_array_get( $block, array( 'attrs', 'settings' ), null );
-	if ( empty( $block_settings ) ) {
+	if ( ! isset( $block['attrs']['settings'] ) || empty( $block['attrs']['settings'] ) ) {
 		return null;
 	}
 
