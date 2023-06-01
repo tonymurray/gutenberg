@@ -26,6 +26,7 @@ import useBlockDisplayTitle from '../block-title/use-block-display-title';
 import ListViewExpander from './expander';
 import { useBlockLock } from '../block-lock';
 import { store as blockEditorStore } from '../../store';
+import { showBlockRemovalWarning } from '../../utils/show-block-removal-warning';
 
 function ListViewBlockSelectButton(
 	{
@@ -56,9 +57,11 @@ function ListViewBlockSelectButton(
 		getPreviousBlockClientId,
 		getBlockRootClientId,
 		getBlockOrder,
+		getBlockName,
 		canRemoveBlocks,
 	} = useSelect( blockEditorStore );
-	const { removeBlocks } = useDispatch( blockEditorStore );
+	const { removeBlocks, displayRemovalPrompt } =
+		useDispatch( blockEditorStore );
 	const isMatch = useShortcutEventMatch();
 
 	// The `href` attribute triggers the browser's native HTML drag operations.
@@ -105,7 +108,22 @@ function ListViewBlockSelectButton(
 				// fallback to focus the parent block.
 				firstBlockRootClientId;
 
-			removeBlocks( blocksToDelete, false );
+			const shouldDisplayRemovalPrompt = blocksToDelete
+				.map( ( blockClientId ) =>
+					showBlockRemovalWarning( getBlockName( blockClientId ) )
+				)
+				.filter( ( blockName ) => blockName );
+
+			if ( shouldDisplayRemovalPrompt.length ) {
+				displayRemovalPrompt( true, {
+					removalFunction: () => {
+						removeBlocks( blocksToDelete, false );
+					},
+					blockName: shouldDisplayRemovalPrompt[ 0 ],
+				} );
+			} else {
+				removeBlocks( blocksToDelete, false );
+			}
 
 			// Update the selection if the original selection has been removed.
 			const shouldUpdateSelection =
