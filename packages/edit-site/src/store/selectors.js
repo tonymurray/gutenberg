@@ -106,6 +106,10 @@ export const getSettings = createSelector(
 			...state.settings,
 			outlineMode: true,
 			focusMode: !! __unstableGetPreference( state, 'focusMode' ),
+			distractionFree: !! __unstableGetPreference(
+				state,
+				'distractionFree'
+			),
 			hasFixedToolbar: !! __unstableGetPreference(
 				state,
 				'fixedToolbar'
@@ -142,6 +146,7 @@ export const getSettings = createSelector(
 		getCanUserCreateMedia( state ),
 		state.settings,
 		__unstableGetPreference( state, 'focusMode' ),
+		__unstableGetPreference( state, 'distractionFree' ),
 		__unstableGetPreference( state, 'fixedToolbar' ),
 		__unstableGetPreference( state, 'keepCaretInsideBlock' ),
 		__unstableGetPreference( state, 'showIconLabels' ),
