@@ -67,24 +67,32 @@ export default function Layout() {
 	const { params } = useLocation();
 	const isListPage = getIsListPage( params );
 	const isEditorPage = ! isListPage;
-	const { hasFixedToolbar, canvasMode, previousShortcut, nextShortcut } =
-		useSelect( ( select ) => {
-			const { getAllShortcutKeyCombinations } = select(
-				keyboardShortcutsStore
-			);
-			const { getCanvasMode } = unlock( select( editSiteStore ) );
-			return {
-				canvasMode: getCanvasMode(),
-				previousShortcut: getAllShortcutKeyCombinations(
-					'core/edit-site/previous-region'
-				),
-				nextShortcut: getAllShortcutKeyCombinations(
-					'core/edit-site/next-region'
-				),
-				hasFixedToolbar:
-					select( preferencesStore ).get( 'fixedToolbar' ),
-			};
-		}, [] );
+	const {
+		isDistractionFree,
+		hasFixedToolbar,
+		canvasMode,
+		previousShortcut,
+		nextShortcut,
+	} = useSelect( ( select ) => {
+		const { getAllShortcutKeyCombinations } = select(
+			keyboardShortcutsStore
+		);
+		const { getCanvasMode } = unlock( select( editSiteStore ) );
+		return {
+			canvasMode: getCanvasMode(),
+			previousShortcut: getAllShortcutKeyCombinations(
+				'core/edit-site/previous-region'
+			),
+			nextShortcut: getAllShortcutKeyCombinations(
+				'core/edit-site/next-region'
+			),
+			hasFixedToolbar: select( preferencesStore ).get( 'fixedToolbar' ),
+			isDistractionFree: select( preferencesStore ).get(
+				'core/edit-site',
+				'distractionFree'
+			),
+		};
+	}, [] );
 	const isEditing = canvasMode === 'edit';
 	const navigateRegionsProps = useNavigateRegions( {
 		previous: previousShortcut,
@@ -120,6 +128,15 @@ export default function Layout() {
 		return null;
 	}
 
+	const headerVariants = {
+		hidden:
+			isDistractionFree && isEditing ? { opacity: 0 } : { opacity: 1 },
+		hover: {
+			opacity: 1,
+			transition: { type: 'tween', delay: 0.2, delayChildren: 0.2 },
+		},
+	};
+
 	return (
 		<>
 			<CommandMenu />
@@ -133,41 +150,94 @@ export default function Layout() {
 					'edit-site-layout',
 					navigateRegionsProps.className,
 					{
+						'is-distraction-free': isDistractionFree && isEditing,
 						'is-full-canvas': isFullCanvas,
 						'is-edit-mode': isEditing,
 						'has-fixed-toolbar': hasFixedToolbar,
 					}
 				) }
 			>
-				<SiteHub ref={ hubRef } className="edit-site-layout__hub" />
+				{ isDistractionFree && isEditing && (
+					<motion.div
+						className="edit-site-layout__header-container"
+						initial={
+							isDistractionFree && isEditing ? 'hidden' : 'hover'
+						}
+						whileHover="hover"
+						variants={ headerVariants }
+						transition={ { type: 'tween', delay: 0.8 } }
+					>
+						<SiteHub
+							ref={ hubRef }
+							className="edit-site-layout__hub"
+						/>
 
-				<AnimatePresence initial={ false }>
-					{ isEditorPage && isEditing && (
-						<NavigableRegion
-							className="edit-site-layout__header"
-							ariaLabel={ __( 'Editor top bar' ) }
-							as={ motion.div }
-							animate={ {
-								y: 0,
-							} }
-							initial={ {
-								y: '-100%',
-							} }
-							exit={ {
-								y: '-100%',
-							} }
-							transition={ {
-								type: 'tween',
-								duration: disableMotion
-									? 0
-									: ANIMATION_DURATION,
-								ease: 'easeOut',
-							} }
-						>
-							{ isEditing && <Header /> }
-						</NavigableRegion>
-					) }
-				</AnimatePresence>
+						<AnimatePresence initial={ false }>
+							{ isEditorPage && isEditing && (
+								<NavigableRegion
+									className="edit-site-layout__header"
+									ariaLabel={ __( 'Editor top bar' ) }
+									as={ motion.div }
+									animate={ {
+										y: 0,
+									} }
+									initial={ {
+										y: '-100%',
+									} }
+									exit={ {
+										y: '-100%',
+									} }
+									transition={ {
+										type: 'tween',
+										duration: disableMotion
+											? 0
+											: ANIMATION_DURATION,
+										ease: 'easeOut',
+									} }
+								>
+									{ isEditing && <Header /> }
+								</NavigableRegion>
+							) }
+						</AnimatePresence>
+					</motion.div>
+				) }
+
+				{ ( ! isDistractionFree || ! isEditing ) && (
+					<>
+						<SiteHub
+							ref={ hubRef }
+							className="edit-site-layout__hub"
+						/>
+
+						<AnimatePresence initial={ false }>
+							{ isEditorPage && isEditing && (
+								<NavigableRegion
+									className="edit-site-layout__header"
+									ariaLabel={ __( 'Editor top bar' ) }
+									as={ motion.div }
+									animate={ {
+										y: 0,
+									} }
+									initial={ {
+										y: '-100%',
+									} }
+									exit={ {
+										y: '-100%',
+									} }
+									transition={ {
+										type: 'tween',
+										duration: disableMotion
+											? 0
+											: ANIMATION_DURATION,
+										ease: 'easeOut',
+									} }
+								>
+									{ isEditing && <Header /> }
+								</NavigableRegion>
+							) }
+						</AnimatePresence>
+					</>
+				) }
 
 				<div className="edit-site-layout__content">
 					<AnimatePresence initial={ false }>
