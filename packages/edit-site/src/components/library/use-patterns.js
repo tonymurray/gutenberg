@@ -90,6 +90,7 @@ const useBlockPatternsByCategory = ( category, postType = PATTERNS ) => {
 	const patterns = useMemo(
 		() =>
 			[ ...( blockPatterns || [] ), ...( restBlockPatterns || [] ) ]
+				.filter( ( pattern ) => pattern.source !== 'core' )
 				.filter(
 					( x, index, arr ) =>
 						index === arr.findIndex( ( y ) => x.name === y.name )

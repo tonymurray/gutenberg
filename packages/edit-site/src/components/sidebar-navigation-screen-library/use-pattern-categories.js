@@ -58,10 +58,12 @@ export default function usePatternCategories() {
 				...( blockPatterns || [] ),
 				...( restBlockPatterns || [] ),
 				...( userPatterns || [] ),
-			].filter(
-				( x, index, arr ) =>
-					index === arr.findIndex( ( y ) => x.name === y.name )
-			),
+			]
+				.filter( ( pattern ) => pattern.source !== 'core' )
+				.filter(
+					( x, index, arr ) =>
+						index === arr.findIndex( ( y ) => x.name === y.name )
+				),
 		[ blockPatterns, restBlockPatterns, userPatterns ]
 	);
 
