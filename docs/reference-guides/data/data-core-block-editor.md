@@ -1136,6 +1136,18 @@ _Returns_
 
 -   `?boolean`: Whether the template is valid or not.
 
+### removalPromptExists
+
+Returns true if removal prompt exists, or false otherwise.
+
+_Parameters_
+
+-   _state_ `Object`: Global application state.
+
+_Returns_
+
+-   `boolean`: Whether removal prompt exists.
+
 ### wasBlockJustInserted
 
 Tells if the block with the passed clientId was just inserted.
@@ -1339,6 +1351,14 @@ Returns an action object used in signalling that blocks have been received. Unli
 _Parameters_
 
 -   _blocks_ `Object[]`: Array of block objects.
+
+_Returns_
+
+-   `Object`: Action object.
+
+### removalPromptExists
+
+Returns an action object used in signalling that a removal prompt display mechanism is available.
 
 _Returns_
 
