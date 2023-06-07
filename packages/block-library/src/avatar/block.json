@@ -51,6 +51,6 @@
 	"editorStyle": "wp-block-avatar",
 	"style": "wp-block-avatar",
 	"autoInsert": {
-		"after": "core/post-content"
+		"core/post-content": "after"
 	}
 }
