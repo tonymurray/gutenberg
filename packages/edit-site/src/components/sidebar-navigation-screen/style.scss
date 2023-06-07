@@ -92,3 +92,14 @@
 	border-top: 1px solid $gray-800;
 	box-shadow: 0 #{-$grid-unit-10} $grid-unit-20 $gray-900;
 }
+
+.edit-site-sidebar-navigation-screen__input-control {
+	.components-input-control__input {
+		color: $white !important;
+		background: $gray-800 !important;
+		border-radius: 0 !important;
+	}
+	.components-input-control__backdrop {
+		border: 0 !important;
+	}
+}
