@@ -24,12 +24,12 @@ import { View } from '../../view';
 
 function Slot(
 	props: WordPressComponentProps< BubblesVirtuallySlotProps, 'div' >,
-	forwardedRef: ForwardedRef< HTMLDivElement >
+	forwardedRef: ForwardedRef< any >
 ) {
 	const { name, fillProps = {}, as: Component = 'div', ...restProps } = props;
 	const { registerSlot, unregisterSlot, ...registry } =
 		useContext( SlotFillContext );
-	const ref = useRef< HTMLDivElement >();
+	const ref = useRef();
 
 	useLayoutEffect( () => {
 		registerSlot( name, ref, fillProps );
