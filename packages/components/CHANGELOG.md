@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Internal
+
+-   `ToggleGroupControl`: Rewrite backdrop animation using framer motion shared layout animations ([#50278](https://github.com/WordPress/gutenberg/pull/50278)).
+
 ## 25.1.0 (2023-06-07)
 
 ### Enhancements
@@ -65,7 +69,6 @@
 
 -   `NavigableContainer`: Convert to TypeScript ([#49377](https://github.com/WordPress/gutenberg/pull/49377)).
 -   `ToolbarItem`: Convert to TypeScript ([#49190](https://github.com/WordPress/gutenberg/pull/49190)).
--   `ToggleGroupControl`: Rewrite backdrop animation using framer motion shared layout animations ([#50278](https://github.com/WordPress/gutenberg/pull/50278)).
 -   Move rich-text related types to the rich-text package ([#49651](https://github.com/WordPress/gutenberg/pull/49651)).
 -   `SlotFill`: simplified the implementation and removed unused code ([#50098](https://github.com/WordPress/gutenberg/pull/50098) and [#50133](https://github.com/WordPress/gutenberg/pull/50133)).
 
