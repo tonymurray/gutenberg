@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * External dependencies
  */
@@ -8,8 +7,12 @@ import { proxyMap } from 'valtio/utils';
  */
 import { createContext } from '@wordpress/element';
 import warning from '@wordpress/warning';
+/**
+ * Internal dependencies
+ */
+import type { SlotRegistry } from '../types';
 
-const SlotFillContext = createContext( {
+const initialContextValue: SlotRegistry = {
 	slots: proxyMap(),
 	fills: proxyMap(),
 	registerSlot: () => {
@@ -22,6 +25,8 @@ const SlotFillContext = createContext( {
 	unregisterSlot: () => {},
 	registerFill: () => {},
 	unregisterFill: () => {},
-} );
+};
+
+const SlotFillContext = createContext( initialContextValue );
 
 export default SlotFillContext;
