@@ -476,16 +476,16 @@ describe( 'Searching for a link', () => {
 			// The fallback URL suggestion should not be shown when input is not URL-like.
 			expect(
 				searchResultElements[ searchResultElements.length - 1 ]
-			).not.toHaveTextContent( 'URL' );
+			).not.toHaveTextContent( 'Press ENTER to add this link' );
 		}
 	);
 
 	it.each( [
-		[ 'https://wordpress.org', 'URL' ],
-		[ 'http://wordpress.org', 'URL' ],
-		[ 'www.wordpress.org', 'URL' ],
-		[ 'wordpress.org', 'URL' ],
-		[ 'ftp://wordpress.org', 'URL' ],
+		[ 'https://wordpress.org', 'link' ],
+		[ 'http://wordpress.org', 'link' ],
+		[ 'www.wordpress.org', 'link' ],
+		[ 'wordpress.org', 'link' ],
+		[ 'ftp://wordpress.org', 'link' ],
 		[ 'mailto:hello@wordpress.org', 'mailto' ],
 		[ 'tel:123456789', 'tel' ],
 		[ '#internal', 'internal' ],
@@ -613,7 +613,6 @@ describe( 'Searching for a link', () => {
 
 			// The URL search suggestion should not exist.
 			expect( lastSearchResultItem ).not.toHaveTextContent( searchTerm );
-			expect( lastSearchResultItem ).not.toHaveTextContent( 'URL' );
 			expect( lastSearchResultItem ).not.toHaveTextContent(
 				'Press ENTER to add this link'
 			);
@@ -668,7 +667,6 @@ describe( 'Manual link entry', () => {
 
 			expect( searchResultElements ).toBeVisible();
 			expect( searchResultElements ).toHaveTextContent( searchTerm );
-			expect( searchResultElements ).toHaveTextContent( 'URL' );
 			expect( searchResultElements ).toHaveTextContent(
 				'Press ENTER to add this link'
 			);
