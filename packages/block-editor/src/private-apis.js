@@ -12,7 +12,7 @@ import { useShouldContextualToolbarShow } from './utils/use-should-contextual-to
 import { cleanEmptyObject } from './hooks/utils';
 import { useBlockEditingMode } from './components/block-editing-mode';
 import BlockQuickNavigation from './components/block-quick-navigation';
-import { PrivateImageSizeControl } from './components/image-size-control';
+import { ImageSizeControl } from './components/image-size-control';
 
 /**
  * Private @wordpress/block-editor APIs.
@@ -29,5 +29,5 @@ lock( privateApis, {
 	cleanEmptyObject,
 	useBlockEditingMode,
 	BlockQuickNavigation,
-	PrivateImageSizeControl,
+	ImageSizeControl,
 } );
