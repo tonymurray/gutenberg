@@ -1,4 +1,8 @@
-// @ts-nocheck
+/**
+ * External dependencies
+ */
+import type { ForwardedRef } from 'react';
+
 /**
  * WordPress dependencies
  */
@@ -14,14 +18,18 @@ import { useMergeRefs } from '@wordpress/compose';
  * Internal dependencies
  */
 import SlotFillContext from './slot-fill-context';
+import type { WordPressComponentProps } from '../../ui/context';
+import type { BubblesVirtuallySlotProps } from '../types';
+import { View } from '../../view';
 
 function Slot(
-	{ name, fillProps = {}, as: Component = 'div', ...props },
-	forwardedRef
+	props: WordPressComponentProps< BubblesVirtuallySlotProps, 'div' >,
+	forwardedRef: ForwardedRef< HTMLDivElement >
 ) {
+	const { name, fillProps = {}, as: Component = 'div', ...restProps } = props;
 	const { registerSlot, unregisterSlot, ...registry } =
 		useContext( SlotFillContext );
-	const ref = useRef();
+	const ref = useRef< HTMLDivElement >();
 
 	useLayoutEffect( () => {
 		registerSlot( name, ref, fillProps );
@@ -41,7 +49,11 @@ function Slot(
 	} );
 
 	return (
-		<Component ref={ useMergeRefs( [ forwardedRef, ref ] ) } { ...props } />
+		<View
+			as={ Component }
+			ref={ useMergeRefs( [ forwardedRef, ref ] ) }
+			{ ...restProps }
+		/>
 	);
 }
 
