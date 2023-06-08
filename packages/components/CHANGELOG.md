@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Internal
+-   `SlotFill`: Migrate internal bubbles-virtually to Typescript.  ([#51350](https://github.com/WordPress/gutenberg/pull/51350)).
+
 ## 25.1.0 (2023-06-07)
 
 ### Enhancements
