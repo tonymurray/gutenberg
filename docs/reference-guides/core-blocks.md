@@ -554,7 +554,7 @@ Displays the contents of a post or page. ([Source](https://github.com/WordPress/
 
 -	**Name:** core/post-content
 -	**Category:** theme
--	**Supports:** align (full, wide), anchor, dimensions (minHeight), typography (fontSize, lineHeight), ~~html~~
+-	**Supports:** align (full, wide), anchor, color (background, gradients, link, text), dimensions (minHeight), typography (fontSize, lineHeight), ~~html~~
 -	**Attributes:** 
 
 ## Post Date
