@@ -17,10 +17,10 @@ import { useMergeRefs } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
+import { View } from '../../view';
 import SlotFillContext from './slot-fill-context';
 import type { WordPressComponentProps } from '../../ui/context';
 import type { BubblesVirtuallySlotProps } from '../types';
-import { View } from '../../view';
 
 function Slot(
 	props: WordPressComponentProps< BubblesVirtuallySlotProps, 'div' >,
