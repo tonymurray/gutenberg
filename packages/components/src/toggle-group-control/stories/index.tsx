@@ -223,7 +223,7 @@ const Fill = ( { children }: { children: React.ReactNode } ) => {
 		<ExampleSlotFill.Fill>
 			{ ( fillProps: {
 				forwardedContext?: [
-					React.Context< any >[ 'Provider' ],
+					React.FunctionComponent<React.PropsWithChildren<any>>,
 					{ value: any; [ key: string ]: any }
 				][];
 			} ) => {
