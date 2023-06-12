@@ -12,10 +12,16 @@
 		"query",
 		"queryContext",
 		"displayLayout",
-		"postsTagName",
+		"tagName",
 		"templateSlug",
 		"previewPostType"
 	],
+	"attributes": {
+		"tagName": {
+			"type": "string",
+			"default": "ul"
+		}
+	},
 	"supports": {
 		"reusable": false,
 		"html": false,

@@ -77,7 +77,7 @@ function render_block_core_post_template( $attributes, $content, $block ) {
 		$classnames .= ' ' . sanitize_title( 'columns-' . $attributes['layout']['columnCount'] );
 	}
 
-	$wrapper_tag_name   = isset( $block->context['postsTagName'] ) ? $block->context['postsTagName'] : 'ul';
+	$wrapper_tag_name   = isset( $attributes['tagName'] ) ? $attributes['tagName'] : 'ul';
 	$item_tag_name      = 'ul' === $wrapper_tag_name ? 'li' : 'div';
 	$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => trim( $classnames ) ) );
 
