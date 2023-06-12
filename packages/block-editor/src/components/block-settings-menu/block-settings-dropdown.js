@@ -56,7 +56,7 @@ function CopyMenuItem( { blocks, onCopy, label } ) {
 	);
 }
 
-const ShortcutItemSuffix = ( { shortcut, className } ) => {
+const Shortcut = ( { shortcut } ) => {
 	if ( ! shortcut ) {
 		return null;
 	}
@@ -73,11 +73,7 @@ const ShortcutItemSuffix = ( { shortcut, className } ) => {
 		ariaLabel = shortcut.ariaLabel;
 	}
 
-	return (
-		<span className={ className } aria-label={ ariaLabel }>
-			{ displayText }
-		</span>
-	);
+	return <span aria-label={ ariaLabel }>{ displayText }</span>;
 };
 
 export function BlockSettingsDropdown( {
@@ -334,7 +330,7 @@ export function BlockSettingsDropdown( {
 									updateSelectionAfterDuplicate
 								) }
 								suffix={
-									<ShortcutItemSuffix
+									<Shortcut
 										shortcut={ shortcuts.duplicate }
 									/>
 								}
@@ -350,7 +346,7 @@ export function BlockSettingsDropdown( {
 										onInsertBefore
 									) }
 									suffix={
-										<ShortcutItemSuffix
+										<Shortcut
 											shortcut={ shortcuts.insertBefore }
 										/>
 									}
@@ -363,7 +359,7 @@ export function BlockSettingsDropdown( {
 										onInsertAfter
 									) }
 									suffix={
-										<ShortcutItemSuffix
+										<Shortcut
 											shortcut={ shortcuts.insertAfter }
 										/>
 									}
@@ -417,7 +413,7 @@ export function BlockSettingsDropdown( {
 										updateSelectionAfterRemove
 									) }
 									suffix={
-										<ShortcutItemSuffix
+										<Shortcut
 											shortcut={ shortcuts.remove }
 										/>
 									}
