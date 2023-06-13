@@ -6,6 +6,10 @@
 
 -   `Popover`: Allow legitimate 0 positions to update popover position ([#51320](https://github.com/WordPress/gutenberg/pull/51320)).
 
+### Enhancements
+
+-   `UnitControl`: Revamp support for changing unit by typing ([#39303](https://github.com/WordPress/gutenberg/pull/39303)).
+
 ## 25.1.0 (2023-06-07)
 
 ### Enhancements
