@@ -29,8 +29,9 @@ import EditorCanvas from './editor-canvas';
 import EditorCanvasContainer from '../editor-canvas-container';
 import { usePageContentFocusNotifications } from '../page-content-focus';
 import useSiteEditorSettings from './use-site-editor-settings';
-import useSiteEditorMode from './use-site-editor-mode';
 import { store as editSiteStore } from '../../store';
+import { FOCUSABLE_ENTITIES } from './constants';
+import { unlock } from '../../lock-unlock';
 
 const LAYOUT = {
 	type: 'default',
@@ -40,7 +41,21 @@ const LAYOUT = {
 
 export default function SiteEditorCanvas() {
 	const { clearSelectedBlock } = useDispatch( blockEditorStore );
-	const { isViewMode, isFocusMode } = useSiteEditorMode();
+
+	const { templateType, isFocusMode, isViewMode } = useSelect( ( select ) => {
+		const { getEditedPostType, getCanvasMode } = unlock(
+			select( editSiteStore )
+		);
+
+		const _templateType = getEditedPostType();
+
+		return {
+			templateType: _templateType,
+			isFocusMode: FOCUSABLE_ENTITIES.includes( _templateType ),
+			isViewMode: getCanvasMode() === 'view',
+		};
+	}, [] );
+
 	const [ resizeObserver, sizes ] = useResizeObserver();
 
 	const settings = useSiteEditorSettings();
@@ -52,14 +67,6 @@ export default function SiteEditorCanvas() {
 
 		return {
 			hasBlocks: !! blocks,
-		};
-	}, [] );
-
-	const { templateType } = useSelect( ( select ) => {
-		const { getEditedPostType } = select( editSiteStore );
-
-		return {
-			templateType: getEditedPostType(),
 		};
 	}, [] );
 

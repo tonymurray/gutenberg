@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useEffect } from '@wordpress/element';
 import { useEntityId } from '@wordpress/core-data';
 import {
@@ -14,8 +14,8 @@ import { createBlock } from '@wordpress/blocks';
  * Internal dependencies
  */
 import { unlock } from '../../../lock-unlock';
-import useSiteEditorMode from '../use-site-editor-mode';
 import useSiteEditorSettings from '../use-site-editor-settings';
+import { store as editSiteStore } from '../../../store';
 
 const { ExperimentalBlockEditorProvider } = unlock( blockEditorPrivateApis );
 
@@ -51,7 +51,13 @@ export default function NavigationBlockEditorProvider( { children } ) {
 		];
 	}, [ navigationMenuId ] );
 
-	const { isEditMode } = useSiteEditorMode();
+	const { isEditMode } = useSelect( ( select ) => {
+		const { getCanvasMode } = unlock( select( editSiteStore ) );
+
+		return {
+			isEditMode: getCanvasMode() === 'edit',
+		};
+	}, [] );
 
 	const { selectBlock, setBlockEditingMode, unsetBlockEditingMode } = unlock(
 		useDispatch( blockEditorStore )

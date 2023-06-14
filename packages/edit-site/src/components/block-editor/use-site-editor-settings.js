@@ -78,12 +78,12 @@ export default function useSiteEditorSettings( templateType ) {
 			inserterMediaCategories,
 			__experimentalBlockPatterns: blockPatterns,
 			__experimentalBlockPatternCategories: blockPatternCategories,
-			// Some Site Editor entities (e.g. `wp_navigation`) may utilise
-			// template locking in their settings. Therefore this must be
-			// explicitly "unset" to avoid the template locking UI being
-			// active for all entities.
-			templateLock: false,
-			template: false,
+			// // Some Site Editor entities (e.g. `wp_navigation`) may utilise
+			// // template locking in their settings. Therefore this must be
+			// // explicitly "unset" to avoid the template locking UI being
+			// // active for all entities.
+			// templateLock: false,
+			// template: false,
 		};
 	}, [ storedSettings, blockPatterns, blockPatternCategories ] );
 }
