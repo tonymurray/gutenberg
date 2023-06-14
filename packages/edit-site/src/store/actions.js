@@ -195,12 +195,26 @@ export function setHomeTemplateId() {
  *
  * @param {Object} context The context object.
  *
- * @return {number} The resolved template ID for the page route.
+ * @return {Object} Action object.
  */
 export function setEditedPostContext( context ) {
 	return {
 		type: 'SET_EDITED_POST_CONTEXT',
 		context,
+	};
+}
+
+/**
+ * Set's the current block editor edited post.
+ *
+ * @param {Object} editedPost The edited post object.
+ *
+ * @return {Object} Action object.
+ */
+export function setEditedPost( editedPost ) {
+	return {
+		type: 'SET_EDITED_POST',
+		...editedPost,
 	};
 }
 
