@@ -201,7 +201,7 @@ function gutenberg_register_auto_inserted_blocks( $settings, $metadata ) {
 }
 add_filter( 'block_type_metadata_settings', 'gutenberg_register_auto_inserted_blocks', 10, 2 );
 
-function gutenberg_parse_and_serialize_block_templates( $query_result, $query, $template_type ) {
+function gutenberg_parse_and_serialize_block_templates( $query_result ) {
 	foreach ( $query_result as $block_template ) {
 		if ( 'theme' !== $block_template->source ) {
 			continue;
@@ -212,23 +212,21 @@ function gutenberg_parse_and_serialize_block_templates( $query_result, $query, $
 
 	return $query_result;
 }
-add_filter( 'get_block_templates', 'gutenberg_parse_and_serialize_block_templates', 10, 3 );
+add_filter( 'get_block_templates', 'gutenberg_parse_and_serialize_block_templates', 10, 1 );
 
 /**
  * Filters the block template object after it has been (potentially) fetched from the theme file.
  *
  * @param WP_Block_Template|null $block_template The found block template, or null if there is none.
- * @param string                 $id             Template unique identifier (example: 'theme_slug//template_slug').
- * @param string                 $template_type  Template type: 'wp_template' or 'wp_template_part'.
  */
-function gutenberg_parse_and_serialize_blocks( $block_template, $id, $template_type ) {
+function gutenberg_parse_and_serialize_blocks( $block_template ) {
 
 	$blocks                  = parse_blocks( $block_template->content );
 	$block_template->content = gutenberg_serialize_blocks( $blocks );
 
 	return $block_template;
 }
-add_filter( 'get_block_file_template', 'gutenberg_parse_and_serialize_blocks', 10, 3 );
+add_filter( 'get_block_file_template', 'gutenberg_parse_and_serialize_blocks', 10, 1 );
 
 function gutenberg_serialize_block( $block ) {
 	$block_content = '';
