@@ -137,7 +137,7 @@ function gutenberg_auto_insert_block( $anchor_block, $relative_position, $insert
 
 			// Find matching `innerContent` chunk index.
 			$chunk_index = 0;
-			while( $anchor_block_index > 0 ) {
+			while ( $anchor_block_index > 0 ) {
 				if ( ! is_string( $block['innerContent'][ $chunk_index ] ) ) {
 					$anchor_block_index--;
 				}
@@ -186,13 +186,13 @@ function gutenberg_register_auto_inserted_blocks( $settings, $metadata ) {
 		// REST API endpoints), and auto-insert sibling blocks on the frontend.
 		// TODO: Make work for child blocks auto-insertion on the frontend.
 		$inserter = gutenberg_auto_insert_block( $block_name, $mapped_position, $inserted_block );
-		add_filter( "gutenberg_serialize_block", $inserter, 10, 1 );
+		add_filter( 'gutenberg_serialize_block', $inserter, 10, 1 );
 
 		// TODO: Remove the following in favor of the gutenberg_serialize_block filter above,
 		// once that is working for child blocks on the frontend.
 		if ( 'first_child' === $mapped_position || 'last_child' === $mapped_position ) {
 			$inserter = gutenberg_auto_insert_block( $block_name, $mapped_position, $inserted_block );
-			add_filter( "render_block_data", $inserter, 10, 1 );
+			add_filter( 'render_block_data', $inserter, 10, 1 );
 		}
 		$settings['auto_insert'][ $block_name ] = $mapped_position;
 	}
@@ -201,12 +201,12 @@ function gutenberg_register_auto_inserted_blocks( $settings, $metadata ) {
 }
 add_filter( 'block_type_metadata_settings', 'gutenberg_register_auto_inserted_blocks', 10, 2 );
 
-function gutenberg_parse_and_serialize_block_templates( $query_result, $query, $template_type )  {
-	foreach( $query_result as $block_template ) {
+function gutenberg_parse_and_serialize_block_templates( $query_result, $query, $template_type ) {
+	foreach ( $query_result as $block_template ) {
 		if ( 'theme' !== $block_template->source ) {
 			continue;
 		}
-		$blocks = parse_blocks( $block_template->content );
+		$blocks                  = parse_blocks( $block_template->content );
 		$block_template->content = gutenberg_serialize_blocks( $blocks );
 	}
 
@@ -223,7 +223,7 @@ add_filter( 'get_block_templates', 'gutenberg_parse_and_serialize_block_template
  */
 function gutenberg_parse_and_serialize_blocks( $block_template, $id, $template_type ) {
 
-	$blocks = parse_blocks( $block_template->content );
+	$blocks                  = parse_blocks( $block_template->content );
 	$block_template->content = gutenberg_serialize_blocks( $blocks );
 
 	return $block_template;
@@ -240,7 +240,7 @@ function gutenberg_serialize_block( $block ) {
 		if ( is_string( $chunk ) ) {
 			$block_content .= $chunk;
 		} else { // Compare to WP_Block::render().
-			$inner_block = $block['innerBlocks'][ $index++ ];
+			$inner_block    = $block['innerBlocks'][ $index++ ];
 			$block_content .= gutenberg_serialize_block( $inner_block );
 		}
 	}

@@ -25,9 +25,9 @@ class Gutenberg_REST_Block_Patterns_Controller_6_3 extends Gutenberg_REST_Block_
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 		$response = parent::prepare_item_for_response( $item, $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
-		$blocks = parse_blocks( $data['content'] );
+		$blocks          = parse_blocks( $data['content'] );
 		$data['content'] = gutenberg_serialize_blocks( $blocks ); // Serialize or render?
 
 		return rest_ensure_response( $data );
