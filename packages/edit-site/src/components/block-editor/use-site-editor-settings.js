@@ -20,8 +20,6 @@ export default function useSiteEditorSettings( templateType ) {
 		};
 	}, [] );
 
-	const isNavigationFocusMode = templateType === 'wp_navigation';
-
 	const settingsBlockPatterns =
 		storedSettings.__experimentalAdditionalBlockPatterns ?? // WP 6.0
 		storedSettings.__experimentalBlockPatterns; // WP 5.9
@@ -80,16 +78,12 @@ export default function useSiteEditorSettings( templateType ) {
 			inserterMediaCategories,
 			__experimentalBlockPatterns: blockPatterns,
 			__experimentalBlockPatternCategories: blockPatternCategories,
-			// Template locking must be explicitly "unset" for non-navigation entities.
-			templateLock: isNavigationFocusMode ? 'insert' : false,
-			template: isNavigationFocusMode
-				? [ [ 'core/navigation', {}, [] ] ]
-				: false,
+			// Some Site Editor entities (e.g. `wp_navigation`) may utilise
+			// template locking in their settings. Therefore this must be
+			// explicitly "unset" to avoid the template locking UI being
+			// active for all entities.
+			templateLock: false,
+			template: false,
 		};
-	}, [
-		storedSettings,
-		blockPatterns,
-		blockPatternCategories,
-		isNavigationFocusMode,
-	] );
+	}, [ storedSettings, blockPatterns, blockPatternCategories ] );
 }

@@ -35,7 +35,7 @@ const noop = () => {};
  * @return {[WPBlock[], Function, Function]} The block array and setters.
  */
 export default function NavigationBlockEditorProvider( { children } ) {
-	const settings = useSiteEditorSettings();
+	const defaultSettings = useSiteEditorSettings();
 
 	const navigationMenuId = useEntityId( 'postType', 'wp_navigation' );
 
@@ -58,6 +58,15 @@ export default function NavigationBlockEditorProvider( { children } ) {
 	);
 
 	const navigationBlockClientId = blocks && blocks[ 0 ]?.clientId;
+
+	const settings = useMemo( () => {
+		return {
+			...defaultSettings,
+			// Lock the editor to allow the root ("ghost") Navigation block only.
+			templateLock: 'insert',
+			template: [ [ 'core/navigation', {}, [] ] ],
+		};
+	}, [ defaultSettings ] );
 
 	// Auto-select the Navigation block when entering Navigation focus mode.
 	useEffect( () => {
