@@ -129,7 +129,7 @@ function gutenberg_auto_insert_block( $anchor_block, $relative_position, $insert
 		}
 
 		$anchor_block_index = array_search( $anchor_block, array_column( $block['innerBlocks'], 'blockName' ), true );
-		if ( false !== $anchor_block_index ) {
+		if ( false !== $anchor_block_index && ( 'after' === $relative_position || 'before' === $relative_position ) ) {
 			if ( 'after' === $relative_position ) {
 				$anchor_block_index++;
 			}
