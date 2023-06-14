@@ -80,8 +80,13 @@ export default function SiteEditorCanvas() {
 
 	const isTemplateTypeNavigation = templateType === 'wp_navigation';
 
+	const isNavigationFocusMode = isTemplateTypeNavigation && isFocusMode;
+
+	// Hide the appender when:
+	// - In navigation focus mode (should only allow the root Nav block).
+	// - In view mode (i.e. not editing).
 	const showBlockAppender =
-		( isTemplateTypeNavigation && isFocusMode && hasBlocks ) || isViewMode
+		( isNavigationFocusMode && hasBlocks ) || isViewMode
 			? false
 			: undefined;
 
