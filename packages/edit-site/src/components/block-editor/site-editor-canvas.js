@@ -46,12 +46,12 @@ export default function SiteEditorCanvas() {
 	const settings = useSiteEditorSettings();
 
 	const { hasBlocks } = useSelect( ( select ) => {
-		const { getBlocks } = select( blockEditorStore );
+		const { getBlockCount } = select( blockEditorStore );
 
-		const blocks = getBlocks();
+		const blocks = getBlockCount();
 
 		return {
-			hasBlocks: blocks?.length !== 0,
+			hasBlocks: !! blocks,
 		};
 	}, [] );
 
