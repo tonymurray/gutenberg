@@ -78,12 +78,14 @@ export default function useSiteEditorSettings( templateType ) {
 			inserterMediaCategories,
 			__experimentalBlockPatterns: blockPatterns,
 			__experimentalBlockPatternCategories: blockPatternCategories,
-			// // Some Site Editor entities (e.g. `wp_navigation`) may utilise
-			// // template locking in their settings. Therefore this must be
-			// // explicitly "unset" to avoid the template locking UI being
-			// // active for all entities.
-			// templateLock: false,
-			// template: false,
+			// Temporary fix for bug in Block Editor Provider:
+			// see: https://github.com/WordPress/gutenberg/issues/51489.
+			// Some Site Editor entities (e.g. `wp_navigation`) may utilise
+			// template locking in their settings. Therefore this must be
+			// explicitly "unset" to avoid the template locking UI remaining
+			// active for all entities.
+			templateLock: false,
+			template: false,
 		};
 	}, [ storedSettings, blockPatterns, blockPatternCategories ] );
 }
