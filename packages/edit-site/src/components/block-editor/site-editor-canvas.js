@@ -139,7 +139,7 @@ export default function SiteEditorCanvas() {
 												isTemplateTypeNavigation,
 										}
 									) }
-									__experimentalLayout={ LAYOUT }
+									layout={ LAYOUT }
 									renderAppender={ showBlockAppender }
 								/>
 							</EditorCanvas>
