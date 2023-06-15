@@ -1,4 +1,5 @@
 # Widgets Block Editor overview
+Published: 29 October 2021
 
 ## Widgets Block Editor
 
